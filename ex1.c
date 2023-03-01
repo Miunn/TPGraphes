@@ -716,9 +716,29 @@ int inclus_aretes_matrix(MATRIX *g1, MATRIX *g2)
     return 1;
 }
 
-int inclus_aretes_liste(LISTE *l1, LISTE *l2, int strict)
+int inclus_aretes_liste(LISTE *l1, LISTE *l2)
 {
-    int aretescommun = 0, aretesl1 = 0;
+    int aretescommun = 0, aretesl2 = 0;
+}
+
+int est_patiel_matrix(MATRIX *m1, MATRIX *m2)
+{
+    int segaux = 0;
+    if (inclus_sommet_matrix(m1, m2, 0) && !inclus_sommet_matrix(m1, m2, 1))
+        segaux = 1;
+    if (segaux && inclus_aretes_matrix(m1, m2))
+        return 1;
+    return 0;
+}
+
+int est_patiel_liste(LISTE *m1, LISTE *m2)
+{
+    int segaux = 0;
+    if (inclus_sommet_liste(m1, m2, 0) && !inclus_sommet_liste(m1, m2, 1))
+        segaux = 1;
+    if (segaux && inclus_aretes_liste(m1, m2))
+        return 1;
+    return 0;
 }
 
 int main()
@@ -764,10 +784,10 @@ int main()
 
     add_matrix(M1, &v1, &v2);
     add_matrix(M1, &v2, &v3);
+    add_matrix(M1, &v1, &v3);
 
     add_matrix(M2, &v1, &v2);
     add_matrix(M2, &v2, &v3);
-    add_matrix(M2, &v1, &v3);
 
     if (inclus_aretes_matrix(M1, M2))
     {
