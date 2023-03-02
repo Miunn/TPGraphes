@@ -134,13 +134,6 @@ MATRIX *graphe_vide_matrix()
     return m;
 }
 
-VERTICE *createVertice(char *name, int id) {
-    VERTICE *v = malloc(sizeof(VERTICE));
-    v->id = id;
-    v->nom = name;
-    return v;
-}
-
 /**
  * @brief Ajoute un sommet à la matrice. Si le sommet est discontinu pr rapport à la taille de la matrice
  * (si on essaye d'ajouter le sommet 5 alors que la matrice contient les sommets 1, 2 et 3) on ajoute le(s) sommet(s) manquant(s)
@@ -148,12 +141,12 @@ VERTICE *createVertice(char *name, int id) {
  * @param m La matrice à modifer
  * @param s L'identifiant du sommet à ajouter
  */
-void add_sommet_matrix(MATRIX *m, VERTICE v)
+void add_sommet_matrix(MATRIX *m, VERTICE s)
 {
     if (m->n == 0)
     {
         m->vertices = (VERTICE *)malloc(sizeof(VERTICE));
-        m->vertices[0] = v;
+        m->vertices[0] = s;
 
         m->graph = (int **)malloc(sizeof(int *));
         m->graph[0] = (int *)malloc(sizeof(int));
@@ -164,9 +157,10 @@ void add_sommet_matrix(MATRIX *m, VERTICE v)
     else
     {
         // Vérification de l'absence du sommet
+        printf("Sommet a ajouter:%d %s\n", s.id, s.nom);
         for (int i = 0; i < m->n; i++)
         {
-            if (m->vertices[i].id == v.id)
+            if (m->vertices[i].id == s.id)
             {
                 printf("Sommet deja present\n");
                 return;
@@ -175,7 +169,7 @@ void add_sommet_matrix(MATRIX *m, VERTICE v)
 
         m->vertices = (VERTICE *)realloc(m->vertices, (m->n + 1) * sizeof(VERTICE));
 
-        m->vertices[m->n] = v;
+        m->vertices[m->n] = (VERTICE){s.nom, s.id};
         m->graph = (int **)realloc(m->graph, (m->n + 1) * sizeof(int *));
         m->graph[m->n] = (int *)malloc((m->n + 1) * sizeof(int));
 
@@ -269,54 +263,27 @@ MATRIX *load(char *nom)
     }
 
     MATRIX *m = graphe_vide_matrix();
-    int id;
+
     // Ajout des sommets
     for (int i = 0; i < vertices; i++)
     {
-        getline(&buff, &buff_size, stream);
+        fgets(buff, buff_size, stream);
+        buff[strlen(buff) - 1] = '\0'; // Remove \n
 
-        int idLen = 0;
-        for (int i = 0; i < 100; i++) {
-            if (buff[i] == ' ') {
-                break;
-            } else {
-                idLen++;
-            }
-        }
-
-        char *strId = (char *) malloc((idLen+1) * sizeof(char));
-        for (int i = 0; i < idLen; i++) {
-            strId[i] = buff[i];
-        }
-        strId[idLen] = '\0';
-        int nameLen = 0;
-        for (int i = idLen+1; i < 100; i++) {
-            if (buff[i] == '\n') {
-                break;
-            } else {
-                nameLen++;
-            }
-        }
-
-        char *name = (char *) malloc((nameLen+1) * sizeof(char));
-        for (int i = 0; i < idLen+nameLen+1; i++) {
-            name[i] = buff[idLen+i];
-        }
-        name[nameLen] = '\0';
-        id = atoi(strId);
-        printf("name:%s\n", name);
-        add_sommet_matrix(m, (VERTICE){name, id});
+        int id = atoi(strtok(buff, " "));
+        char *name = strtok(NULL, " ");
+        printf("%s, %d\n", name, strlen(name));
     }
+    add_sommet_matrix(m, (VERTICE){"A", 0});
+    add_sommet_matrix(m, (VERTICE){"B", 1});
+    add_sommet_matrix(m, (VERTICE){"C", 2});
+    add_sommet_matrix(m, (VERTICE){"D", 3});
+    add_sommet_matrix(m, (VERTICE){"E", 4});
 
-    printf("%d Sommets:\n", m->n);
-    for (int i = 0; i < m->n; i++) {
-        printf("%d,%s\n", m->vertices[i].id, m->vertices[i].nom);
-    }
-    
-    printf("\nTOUS LES SOMMETS AJOUTES\n");
+    printf("TOUS LES SOMMETS AJOUTES\n");
     display_graph_matrix(m);
 
-    /*fgets(buff, buff_size, stream);
+    fgets(buff, buff_size, stream);
     buff[strlen(buff) - 1] = '\0';
     while (chars != -1)
     {
@@ -350,7 +317,7 @@ MATRIX *load(char *nom)
             add_matrix(m, vA, vB);
         }
         chars = getline(&buff, &buff_size, stream);
-    }*/
+    }
     free(buff);
 
     fclose(stream);
@@ -780,7 +747,7 @@ int main()
     supp_liste(l, &verticeA,&verticeB);
     display_graph_liste(l);*/
 
-    /*MATRIX *M1 = graphe_vide_matrix();
+    MATRIX *M1 = graphe_vide_matrix();
     MATRIX *M2 = graphe_vide_matrix();
 
     VERTICE v1 = {"a", 0};
@@ -807,10 +774,10 @@ int main()
         printf("est inclus\n");
     }
     else
-        printf("non inclus\n");*/
+        printf("non inclus\n");
 
     MATRIX *lm = load("d.txt");
-    //display_graph_matrix(lm);
+    display_graph_matrix(lm);
 
     /*LISTE *l = matrix_to_liste(lm);
     display_graph_liste(l);*/
