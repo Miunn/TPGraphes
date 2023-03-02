@@ -134,13 +134,6 @@ MATRIX *graphe_vide_matrix()
     return m;
 }
 
-VERTICE *createVertice(char *name, int id) {
-    VERTICE *v = malloc(sizeof(VERTICE));
-    v->id = id;
-    v->nom = name;
-    return v;
-}
-
 /**
  * @brief Ajoute un sommet à la matrice. Si le sommet est discontinu pr rapport à la taille de la matrice
  * (si on essaye d'ajouter le sommet 5 alors que la matrice contient les sommets 1, 2 et 3) on ajoute le(s) sommet(s) manquant(s)
@@ -148,12 +141,12 @@ VERTICE *createVertice(char *name, int id) {
  * @param m La matrice à modifer
  * @param s L'identifiant du sommet à ajouter
  */
-void add_sommet_matrix(MATRIX *m, VERTICE v)
+void add_sommet_matrix(MATRIX *m, VERTICE s)
 {
     if (m->n == 0)
     {
         m->vertices = (VERTICE *)malloc(sizeof(VERTICE));
-        m->vertices[0] = v;
+        m->vertices[0] = s;
 
         m->graph = (int **)malloc(sizeof(int *));
         m->graph[0] = (int *)malloc(sizeof(int));
@@ -164,9 +157,10 @@ void add_sommet_matrix(MATRIX *m, VERTICE v)
     else
     {
         // Vérification de l'absence du sommet
+        printf("Sommet a ajouter:%d %s\n", s.id, s.nom);
         for (int i = 0; i < m->n; i++)
         {
-            if (m->vertices[i].id == v.id)
+            if (m->vertices[i].id == s.id)
             {
                 printf("Sommet deja present\n");
                 return;
@@ -175,7 +169,7 @@ void add_sommet_matrix(MATRIX *m, VERTICE v)
 
         m->vertices = (VERTICE *)realloc(m->vertices, (m->n + 1) * sizeof(VERTICE));
 
-        m->vertices[m->n] = v;
+        m->vertices[m->n] = (VERTICE){s.nom, s.id};
         m->graph = (int **)realloc(m->graph, (m->n + 1) * sizeof(int *));
         m->graph[m->n] = (int *)malloc((m->n + 1) * sizeof(int));
 
@@ -749,9 +743,29 @@ int inclus_aretes_matrix(MATRIX *g1, MATRIX *g2)
     return 1;
 }
 
-int inclus_aretes_liste(LISTE *l1, LISTE *l2, int strict)
+int inclus_aretes_liste(LISTE *l1, LISTE *l2)
 {
-    int aretescommun = 0, aretesl1 = 0;
+    int aretescommun = 0, aretesl2 = 0;
+}
+
+int est_patiel_matrix(MATRIX *m1, MATRIX *m2)
+{
+    int segaux = 0;
+    if (inclus_sommet_matrix(m1, m2, 0) && !inclus_sommet_matrix(m1, m2, 1))
+        segaux = 1;
+    if (segaux && inclus_aretes_matrix(m1, m2))
+        return 1;
+    return 0;
+}
+
+int est_patiel_liste(LISTE *m1, LISTE *m2)
+{
+    int segaux = 0;
+    if (inclus_sommet_liste(m1, m2, 0) && !inclus_sommet_liste(m1, m2, 1))
+        segaux = 1;
+    if (segaux && inclus_aretes_liste(m1, m2))
+        return 1;
+    return 0;
 }
 
 int main()
@@ -780,7 +794,7 @@ int main()
     supp_liste(l, &verticeA,&verticeB);
     display_graph_liste(l);*/
 
-    /*MATRIX *M1 = graphe_vide_matrix();
+    MATRIX *M1 = graphe_vide_matrix();
     MATRIX *M2 = graphe_vide_matrix();
 
     VERTICE v1 = {"a", 0};
@@ -797,20 +811,20 @@ int main()
 
     add_matrix(M1, &v1, &v2);
     add_matrix(M1, &v2, &v3);
+    add_matrix(M1, &v1, &v3);
 
     add_matrix(M2, &v1, &v2);
     add_matrix(M2, &v2, &v3);
-    add_matrix(M2, &v1, &v3);
 
     if (inclus_aretes_matrix(M1, M2))
     {
         printf("est inclus\n");
     }
     else
-        printf("non inclus\n");*/
+        printf("non inclus\n");
 
     MATRIX *lm = load("d.txt");
-    //display_graph_matrix(lm);
+    display_graph_matrix(lm);
 
     /*LISTE *l = matrix_to_liste(lm);
     display_graph_liste(l);*/
