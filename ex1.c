@@ -823,8 +823,8 @@ int main()
     else
         printf("non inclus\n");
 
-    MATRIX *lm = load("d.txt");
-    display_graph_matrix(lm);
+    /*MATRIX *lm = load("d.txt");
+    display_graph_matrix(lm);*/
 
     /*LISTE *l = matrix_to_liste(lm);
     display_graph_liste(l);*/
