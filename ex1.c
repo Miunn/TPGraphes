@@ -54,7 +54,7 @@ void display_graph_matrix(MATRIX *m)
     printf("    ");
     for (int i = 0; i < m->n; i++)
     {
-        printf("%d ", i + 1);
+        printf("%d ", m->vertices[i].id);
     }
     printf("\n");
     for (int i = 0; i < m->n * 2 + 4; i++)
@@ -64,7 +64,7 @@ void display_graph_matrix(MATRIX *m)
     printf("\n");
     for (int i = 0; i < m->n; i++)
     {
-        printf("%d | ", i + 1);
+        printf("%d | ", m->vertices[i].id);
         for (int j = 0; j < m->n; j++)
         {
             printf("%d ", m->graph[i][j]);
@@ -242,6 +242,7 @@ int est_voisin(MATRIX *m, VERTICE *i, VERTICE *j)
  */
 MATRIX *load(char *nom)
 {
+    printf("0:%d\n", '\0');
     FILE *stream = fopen(nom, "r");
 
     if (stream == NULL)
@@ -292,13 +293,12 @@ MATRIX *load(char *nom)
             }
         }
 
-        char *name = (char *) malloc((nameLen+1) * sizeof(char));
-        for (int i = 0; i < idLen+nameLen+1; i++) {
-            name[i] = buff[idLen+i];
+        char *name = (char *) malloc(nameLen * sizeof(char));
+        for (int i = 0; i < nameLen; i++) {
+            name[i] = buff[idLen+i+1];
         }
-        name[nameLen] = '\0';
+        name[nameLen-1] = '\0'; // getline leaves a carriage return
         id = atoi(strId);
-        printf("name:%s\n", name);
         add_sommet_matrix(m, (VERTICE){name, id});
     }
 
@@ -310,27 +310,52 @@ MATRIX *load(char *nom)
     printf("\nTOUS LES SOMMETS AJOUTES\n");
     display_graph_matrix(m);
 
-    /*fgets(buff, buff_size, stream);
-    buff[strlen(buff) - 1] = '\0';
+    fgets(buff, buff_size, stream);
     while (chars != -1)
     {
         // Récupération des arretes
-        char *nameVA = strtok(buff, " ");
-        char *nameVB = strtok(NULL, " ");
-        nameVB[strlen(nameVB) - 1] = '\0';
+        int nameALen = 0;
+        for (int i = 0; i < 100; i++) {
+            if (buff[i] == ' ') {
+                break;
+            } else {
+                nameALen++;
+            }
+        }
+
+        char *nameVA = malloc((nameALen+1) * sizeof(char));
+        for (int i = 0; i < nameALen; i++) {
+            nameVA[i] = buff[i];
+        }
+        nameVA[nameALen] = '\0';
+
+        int nameBLen = 0;
+        for (int i = nameALen+1; i < 100; i++) {
+            if (buff[i] == '\n') {
+                break;
+            } else {
+                nameBLen++;
+            }
+        }
+
+        char *nameVB = malloc(nameBLen * sizeof(char));
+        for (int i = 0; i < nameBLen+1; i++) {
+            nameVB[i] = buff[nameALen + i + 1];
+        }
+        nameVB[nameBLen-1] = '\0';
 
         VERTICE *vA = NULL;
         VERTICE *vB = NULL;
         printf("%s-%s(%d)\n", nameVA, nameVB, m->n);
         for (int i = 0; i < m->n; i++)
         {
-            printf("n:%s %s %s %d %d\n", m->vertices[i].nom, nameVA, nameVB, m->vertices[i].nom == nameVA, m->vertices[i].nom == nameVB);
-            if (m->vertices[i].nom == nameVA)
+            printf("n:%s-%s-%s-%d\n", m->vertices[i].nom, nameVA, nameVB, strcmp(m->vertices[i].nom, nameVA));
+            if (strcmp(m->vertices[i].nom, nameVA) == 0)
             {
                 printf("Trouve A\n");
                 vA = &m->vertices[i];
             }
-            else if (m->vertices[i].nom == nameVB)
+            else if (strcmp(m->vertices[i].nom, nameVB) == 0)
             {
                 printf("Trouve B\n");
                 vB = &m->vertices[i];
@@ -344,7 +369,7 @@ MATRIX *load(char *nom)
             add_matrix(m, vA, vB);
         }
         chars = getline(&buff, &buff_size, stream);
-    }*/
+    }
     free(buff);
 
     fclose(stream);
@@ -823,8 +848,8 @@ int main()
     else
         printf("non inclus\n");
 
-    /*MATRIX *lm = load("d.txt");
-    display_graph_matrix(lm);*/
+    MATRIX *lm = load("d.txt");
+    display_graph_matrix(lm);
 
     /*LISTE *l = matrix_to_liste(lm);
     display_graph_liste(l);*/
