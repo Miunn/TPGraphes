@@ -463,6 +463,7 @@ void add_liste(LISTE *G, VERTICE *v1, VERTICE *v2)
     }
 
     G->graph[v1->id] = (int *)realloc(G->graph[v1->id], (taillei + 1) * sizeof(int));
+    printf("reallocation 1 OK\n");
     if (G->graph[v1->id][0] == -1)
     {
         G->graph[v1->id][0] = v2->id;
@@ -478,7 +479,7 @@ void add_liste(LISTE *G, VERTICE *v1, VERTICE *v2)
 
                 for (int m = taillei; m > l; m--)
                 {
-                    G->graph[v1->id][m] = G->graph[v1->id - 1][m - 1];
+                    G->graph[v1->id][m] = G->graph[v1->id][m - 1];
                 }
                 G->graph[v1->id][l] = v2->id;
                 G->sizes[v1->id] = taillei + 1;
@@ -486,10 +487,13 @@ void add_liste(LISTE *G, VERTICE *v1, VERTICE *v2)
             }
         }
     }
+    printf("juste avant le deuxième sommet\n");
 
     if (v1->id != v2->id)
     {
+        printf("dans le deuxième sommet\n");
         G->graph[v2->id] = (int *)realloc(G->graph[v2->id], (taillej + 1) * sizeof(int));
+        printf("reallocation 2 OK\n");
         if (G->graph[v2->id][0] == -1)
         {
 
@@ -514,6 +518,7 @@ void add_liste(LISTE *G, VERTICE *v1, VERTICE *v2)
             }
         }
     }
+    printf("\n");
 }
 
 void supp_liste(LISTE *G, VERTICE *v1, VERTICE *v2)
@@ -707,7 +712,7 @@ int inclus_sommet_liste(LISTE *G1, LISTE *G2, int strict)
 int inclus_aretes_matrix(MATRIX *g1, MATRIX *g2)
 {
     int aretescommun = 0, aretesg2 = 0;
-    char s1, s2;
+    char *s1, *s2;
     int index1, index2;
 
     for (int i = 0; i < g2->n; i++)
@@ -724,13 +729,13 @@ int inclus_aretes_matrix(MATRIX *g1, MATRIX *g2)
         {
             if (g1->graph[i][j] == 1)
             {
-                s1 = *g1->vertices[i].nom;
-                s2 = *g1->vertices[j].nom;
+                s1 = g1->vertices[i].nom;
+                s2 = g1->vertices[j].nom;
                 for (int k = 0; k < g2->n; k++)
                 {
-                    if (*g2->vertices[k].nom == s1)
+                    if (g2->vertices[k].nom == s1)
                         index1 = k;
-                    if (*g2->vertices[k].nom == s2)
+                    if (g2->vertices[k].nom == s2)
                         index2 = k;
                 }
                 if (g2->graph[index1][index2] == 1)
@@ -757,7 +762,7 @@ int inclus_aretes_matrix(MATRIX *g1, MATRIX *g2)
 int inclus_aretes_liste(LISTE *l1, LISTE *l2)
 {
     int aretescommun = 0, aretesl2 = 0;
-    char s1, s2;
+    char *s1, *s2;
     int index1 = -1, index2 = -1;
 
     for (int i = 0; i < l2->n; i++)
@@ -773,35 +778,40 @@ int inclus_aretes_liste(LISTE *l1, LISTE *l2)
     {
         for (int j = 0; j < l1->sizes[i]; j++)
         {
-            s1 = *l1->vertices[i].nom;
-            s2 = *l1->vertices[j].nom;
+            s1 = l1->vertices[i].nom;
+            s2 = l1->vertices[l1->graph[i][j]].nom;
+            printf("sommet 1 : %s, sommet 2 : %s\n", s1, s2);
             for (int k = 0; k < l2->n; k++)
             {
-                if (*l2->vertices[k].nom == s1)
+                if (!strcmp(l2->vertices[k].nom, s1))
                 {
                     index1 = k;
                 }
-                if (*l2->vertices[k].nom == s2)
+                if (!strcmp(l2->vertices[k].nom, s2))
                 {
                     index2 = k;
                 }
-                if (index1 == -1)
+            }
+            if (index1 == -1)
+            {
+                printf("Sommet %s non trouvé dans le deuxième graphe\n", s1);
+                return 0;
+            }
+            else if (index2 == -1)
+            {
+                printf("Sommet %s non trouvé dans le deuxième graphe\n", s2);
+                return 0;
+            }
+            for (int g = 0; g < l2->sizes[index1]; g++)
+            {
+                if (l2->graph[index1][g] == index2)
                 {
-                    printf("Sommet %s non trouvé dans le deuxième graphe\n", s1);
-                    return 0;
+                    aretescommun++;
+                    break;
                 }
-                else if (index2 == -1)
+                else if (g == l2->sizes[index1] - 1)
                 {
-                    printf("Sommet %s non trouvé dans le deuxième graphe\n", s2);
-                    return 0;
-                }
-                for (int g = 0; g < l2->sizes[index1]; g++)
-                {
-                    if (l2->graph[index1][g] == index2)
-                    {
-                        aretescommun++;
-                        break;
-                    }
+                    printf("connection entre %d et %d non trouvée\n", index1, index2);
                     return 0;
                 }
             }
@@ -809,7 +819,7 @@ int inclus_aretes_liste(LISTE *l1, LISTE *l2)
     }
     if (aretescommun == aretesl2)
     {
-        // Ensembles d'arêtes de l1 et l2 égaux
+        printf("Ensembles d'arêtes de l1 et l2 égaux\n");
         return 0;
     }
     return 1;
@@ -914,8 +924,14 @@ int main()
     printf("links added for l1\n");
 
     add_liste(l2, &v1, &v2);
+    printf("3\n");
     add_liste(l2, &v2, &v3);
+    printf("TOUT AJOUTE\n");
 
+    for (int i = 0; i < l2->n; i++)
+    {
+        printf("nom sommet %d : %s\n", i, l2->vertices[i]);
+    }
     if (inclus_aretes_liste(l1, l2))
     {
         printf("est inclus\n");
