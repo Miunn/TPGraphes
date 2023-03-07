@@ -271,24 +271,33 @@ MATRIX *load(char *nom)
         getline(&buff, &buff_size, stream);
 
         int idLen = 0;
-        for (int i = 0; i < 100; i++) {
-            if (buff[i] == ' ') {
+        for (int i = 0; i < 100; i++)
+        {
+            if (buff[i] == ' ')
+            {
                 break;
-            } else {
+            }
+            else
+            {
                 idLen++;
             }
         }
 
-        char *strId = (char *) malloc((idLen+1) * sizeof(char));
-        for (int i = 0; i < idLen; i++) {
+        char *strId = (char *)malloc((idLen + 1) * sizeof(char));
+        for (int i = 0; i < idLen; i++)
+        {
             strId[i] = buff[i];
         }
         strId[idLen] = '\0';
         int nameLen = 0;
-        for (int i = idLen+1; i < 100; i++) {
-            if (buff[i] == '\n') {
+        for (int i = idLen + 1; i < 100; i++)
+        {
+            if (buff[i] == '\n')
+            {
                 break;
-            } else {
+            }
+            else
+            {
                 nameLen++;
             }
         }
@@ -303,10 +312,11 @@ MATRIX *load(char *nom)
     }
 
     printf("%d Sommets:\n", m->n);
-    for (int i = 0; i < m->n; i++) {
+    for (int i = 0; i < m->n; i++)
+    {
         printf("%d,%s\n", m->vertices[i].id, m->vertices[i].nom);
     }
-    
+
     printf("\nTOUS LES SOMMETS AJOUTES\n");
     display_graph_matrix(m);
 
@@ -477,6 +487,7 @@ void add_liste(LISTE *G, VERTICE *v1, VERTICE *v2)
     }
 
     G->graph[v1->id] = (int *)realloc(G->graph[v1->id], (taillei + 1) * sizeof(int));
+    printf("reallocation 1 OK\n");
     if (G->graph[v1->id][0] == -1)
     {
         G->graph[v1->id][0] = v2->id;
@@ -492,7 +503,7 @@ void add_liste(LISTE *G, VERTICE *v1, VERTICE *v2)
 
                 for (int m = taillei; m > l; m--)
                 {
-                    G->graph[v1->id][m] = G->graph[v1->id - 1][m - 1];
+                    G->graph[v1->id][m] = G->graph[v1->id][m - 1];
                 }
                 G->graph[v1->id][l] = v2->id;
                 G->sizes[v1->id] = taillei + 1;
@@ -500,10 +511,13 @@ void add_liste(LISTE *G, VERTICE *v1, VERTICE *v2)
             }
         }
     }
+    printf("juste avant le deuxième sommet\n");
 
     if (v1->id != v2->id)
     {
+        printf("dans le deuxième sommet\n");
         G->graph[v2->id] = (int *)realloc(G->graph[v2->id], (taillej + 1) * sizeof(int));
+        printf("reallocation 2 OK\n");
         if (G->graph[v2->id][0] == -1)
         {
 
@@ -528,6 +542,7 @@ void add_liste(LISTE *G, VERTICE *v1, VERTICE *v2)
             }
         }
     }
+    printf("\n");
 }
 
 void supp_liste(LISTE *G, VERTICE *v1, VERTICE *v2)
@@ -721,7 +736,7 @@ int inclus_sommet_liste(LISTE *G1, LISTE *G2, int strict)
 int inclus_aretes_matrix(MATRIX *g1, MATRIX *g2)
 {
     int aretescommun = 0, aretesg2 = 0;
-    char s1, s2;
+    char *s1, *s2;
     int index1, index2;
 
     for (int i = 0; i < g2->n; i++)
@@ -738,13 +753,13 @@ int inclus_aretes_matrix(MATRIX *g1, MATRIX *g2)
         {
             if (g1->graph[i][j] == 1)
             {
-                s1 = *g1->vertices[i].nom;
-                s2 = *g1->vertices[j].nom;
+                s1 = g1->vertices[i].nom;
+                s2 = g1->vertices[j].nom;
                 for (int k = 0; k < g2->n; k++)
                 {
-                    if (*g2->vertices[k].nom == s1)
+                    if (g2->vertices[k].nom == s1)
                         index1 = k;
-                    if (*g2->vertices[k].nom == s2)
+                    if (g2->vertices[k].nom == s2)
                         index2 = k;
                 }
                 if (g2->graph[index1][index2] == 1)
@@ -771,6 +786,67 @@ int inclus_aretes_matrix(MATRIX *g1, MATRIX *g2)
 int inclus_aretes_liste(LISTE *l1, LISTE *l2)
 {
     int aretescommun = 0, aretesl2 = 0;
+    char *s1, *s2;
+    int index1 = -1, index2 = -1;
+
+    for (int i = 0; i < l2->n; i++)
+    {
+        for (int j = 0; j < l2->sizes[i]; j++)
+        {
+            aretesl2++;
+        }
+    }
+    aretesl2 = aretesl2 / 2;
+
+    for (int i = 0; i < l1->n; i++)
+    {
+        for (int j = 0; j < l1->sizes[i]; j++)
+        {
+            s1 = l1->vertices[i].nom;
+            s2 = l1->vertices[l1->graph[i][j]].nom;
+            printf("sommet 1 : %s, sommet 2 : %s\n", s1, s2);
+            for (int k = 0; k < l2->n; k++)
+            {
+                if (!strcmp(l2->vertices[k].nom, s1))
+                {
+                    index1 = k;
+                }
+                if (!strcmp(l2->vertices[k].nom, s2))
+                {
+                    index2 = k;
+                }
+            }
+            if (index1 == -1)
+            {
+                printf("Sommet %s non trouvé dans le deuxième graphe\n", s1);
+                return 0;
+            }
+            else if (index2 == -1)
+            {
+                printf("Sommet %s non trouvé dans le deuxième graphe\n", s2);
+                return 0;
+            }
+            for (int g = 0; g < l2->sizes[index1]; g++)
+            {
+                if (l2->graph[index1][g] == index2)
+                {
+                    aretescommun++;
+                    break;
+                }
+                else if (g == l2->sizes[index1] - 1)
+                {
+                    printf("connection entre %d et %d non trouvée\n", index1, index2);
+                    return 0;
+                }
+            }
+        }
+    }
+    if (aretescommun == aretesl2)
+    {
+        printf("Ensembles d'arêtes de l1 et l2 égaux\n");
+        return 0;
+    }
+    return 1;
 }
 
 int est_patiel_matrix(MATRIX *m1, MATRIX *m2)
@@ -819,7 +895,7 @@ int main()
     supp_liste(l, &verticeA,&verticeB);
     display_graph_liste(l);*/
 
-    MATRIX *M1 = graphe_vide_matrix();
+    /*MATRIX *M1 = graphe_vide_matrix();
     MATRIX *M2 = graphe_vide_matrix();
 
     VERTICE v1 = {"a", 0};
@@ -842,6 +918,45 @@ int main()
     add_matrix(M2, &v2, &v3);
 
     if (inclus_aretes_matrix(M1, M2))
+    {
+        printf("est inclus\n");
+    }
+    else
+        printf("non inclus\n");
+    */
+
+    LISTE *l1 = graphe_vide_liste();
+    LISTE *l2 = graphe_vide_liste();
+
+    VERTICE v1 = {"a", 0};
+    VERTICE v2 = {"b", 1};
+    VERTICE v3 = {"c", 2};
+
+    add_sommet_liste(l1, &v1);
+    add_sommet_liste(l1, &v2);
+    add_sommet_liste(l1, &v3);
+
+    add_sommet_liste(l2, &v1);
+    add_sommet_liste(l2, &v2);
+    add_sommet_liste(l2, &v3);
+
+    add_liste(l1, &v1, &v2);
+    printf("1\n");
+    add_liste(l1, &v2, &v3);
+    printf("2\n");
+    add_liste(l1, &v1, &v3);
+    printf("links added for l1\n");
+
+    add_liste(l2, &v1, &v2);
+    printf("3\n");
+    add_liste(l2, &v2, &v3);
+    printf("TOUT AJOUTE\n");
+
+    for (int i = 0; i < l2->n; i++)
+    {
+        printf("nom sommet %d : %s\n", i, l2->vertices[i]);
+    }
+    if (inclus_aretes_liste(l1, l2))
     {
         printf("est inclus\n");
     }
