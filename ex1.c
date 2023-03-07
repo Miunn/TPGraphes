@@ -270,52 +270,37 @@ MATRIX *load(char *nom)
         getline(&buff, &buff_size, stream);
 
         int idLen = 0;
-        for (int i = 0; i < 100; i++)
-        {
-            if (buff[i] == ' ')
-            {
+        for (int i = 0; i < 100; i++) {
+            if (buff[i] == ' ') {
                 break;
-            }
-            else
-            {
+            } else {
                 idLen++;
             }
         }
 
-        char *strId = (char *)malloc((idLen + 1) * sizeof(char));
-        for (int i = 0; i < idLen; i++)
-        {
+        char *strId = (char *) malloc((idLen+1) * sizeof(char));
+        for (int i = 0; i < idLen; i++) {
             strId[i] = buff[i];
         }
         strId[idLen] = '\0';
         int nameLen = 0;
-        for (int i = idLen + 1; i < 100; i++)
-        {
-            if (buff[i] == '\n')
-            {
+        for (int i = idLen+1; i < 100; i++) {
+            if (buff[i] == '\n') {
                 break;
-            }
-            else
-            {
+            } else {
                 nameLen++;
             }
         }
 
-        char *name = (char *) malloc(nameLen * sizeof(char));
+        char *name = (char *) malloc((nameLen+1) * sizeof(char));
         for (int i = 0; i < nameLen; i++) {
             name[i] = buff[idLen+i+1];
         }
-        name[nameLen-1] = '\0'; // getline leaves a carriage return
+        name[nameLen] = '\0'; // getline leaves a carriage return
         id = atoi(strId);
         add_sommet_matrix(m, (VERTICE){name, id});
     }
 
-    for (int i = 0; i < m->n; i++)
-    {
-        printf("%d,%s\n", m->vertices[i].id, m->vertices[i].nom);
-    }
-
-    display_graph_matrix(m);
 
     fgets(buff, buff_size, stream);
     while (chars != -1)
@@ -345,11 +330,11 @@ MATRIX *load(char *nom)
             }
         }
 
-        char *nameVB = malloc(nameBLen * sizeof(char));
-        for (int i = 0; i < nameBLen+1; i++) {
+        char *nameVB = malloc((nameBLen+1) * sizeof(char));
+        for (int i = 0; i < nameBLen; i++) {
             nameVB[i] = buff[nameALen + i + 1];
         }
-        nameVB[nameBLen-1] = '\0';
+        nameVB[nameBLen] = '\0';
 
         VERTICE *vA = NULL;
         VERTICE *vB = NULL;
@@ -364,7 +349,6 @@ MATRIX *load(char *nom)
                 vB = &m->vertices[i];
             }
         }
-
         if (vA != NULL && vB != NULL)
         {
             add_matrix(m, vA, vB);
@@ -835,7 +819,7 @@ int inclus_aretes_liste(LISTE *l1, LISTE *l2)
     return 1;
 }
 
-int est_patiel_matrix(MATRIX *m1, MATRIX *m2)
+int est_partiel_matrix(MATRIX *m1, MATRIX *m2)
 {
     int segaux = 0;
     if (inclus_sommet_matrix(m1, m2, 0) && !inclus_sommet_matrix(m1, m2, 1))
@@ -845,7 +829,7 @@ int est_patiel_matrix(MATRIX *m1, MATRIX *m2)
     return 0;
 }
 
-int est_patiel_liste(LISTE *m1, LISTE *m2)
+int est_partiel_liste(LISTE *m1, LISTE *m2)
 {
     int segaux = 0;
     if (inclus_sommet_liste(m1, m2, 0) && !inclus_sommet_liste(m1, m2, 1))
@@ -853,6 +837,77 @@ int est_patiel_liste(LISTE *m1, LISTE *m2)
     if (segaux && inclus_aretes_liste(m1, m2))
         return 1;
     return 0;
+}
+
+int est_sous_graphe_liste(LISTE *l1, LISTE *l2)
+{
+    if (inclus_sommet_liste(l1, l2, 1) && inclus_aretes_liste(l1, l2))
+    {
+        return 1;
+    }
+    return 0;
+}
+
+int est_sous_graphe_matrix(MATRIX *m1, MATRIX *m2)
+{
+    if (inclus_sommet_matrix(m1, m2, 1) && inclus_aretes_matrix(m1, m2))
+    {
+        return 1;
+    }
+    return 0;
+}
+
+/**
+ * @brief Renvoi 1 si m1 est un sous graphe partiel de m2
+ * 
+ * @param m1 
+ * @param m2 
+ * @return int 
+ */
+int est_sous_graphe_partiel_matrix(MATRIX *m1, MATRIX *m2) {
+    // Inclusion des sommets
+    int verticesfound = 0;
+    int found = 0;
+    for (int i = 0; i < m1->n; i++) {
+        VERTICE v_curr = m1->vertices[i];
+        found = 0;
+        for (int j = 0; j < m2->n; j++) {
+            if (strcmp(m2->vertices[j].nom, v_curr.nom) == 0) {
+                found = 1;
+                verticesfound++;
+            }
+        }
+
+        if (found == 0) {
+            // Vertice not found => S isn't include in S'
+            return 0;
+        }
+    }
+
+    // We have S include in S', we now check is A is include in A'
+    // We check if each edge of A is include in A
+    int n_edges_m1 = 0;     // To check strict inclusion
+    int n_edges_m2 = 0;
+    for (int i = 0; i < m1->n; i++) {
+        for (int j = 0; j < i+1; j++) {
+            if (m1->graph[i][j] == 1) {
+                n_edges_m1++;
+                if (m2->graph[i][j] != 1) {
+                    return 0;
+                }
+            }
+
+            if (m2->graph[i][j] == 1) {
+                n_edges_m2++;
+            }
+        }
+    }
+
+    if (n_edges_m1 == n_edges_m2) {
+        return 0;
+    }
+
+    return 1;
 }
 
 int main()
@@ -911,7 +966,7 @@ int main()
         printf("non inclus\n");
     */
 
-    LISTE *l1 = graphe_vide_liste();
+    /*LISTE *l1 = graphe_vide_liste();
     LISTE *l2 = graphe_vide_liste();
 
     VERTICE v1 = {"a", 0};
@@ -947,10 +1002,10 @@ int main()
         printf("est inclus\n");
     }
     else
-        printf("non inclus\n");
+        printf("non inclus\n");*/
 
-    MATRIX *lm = load("d.txt");
-    display_graph_matrix(lm);
+    /*MATRIX *lm = load("d.txt");
+    display_graph_matrix(lm);*/
 
     /*LISTE *l = matrix_to_liste(lm);
     display_graph_liste(l);*/
@@ -968,5 +1023,16 @@ int main()
     free_liste(l);*/
     // free_liste(l);
 
+
+    MATRIX *g1 = load("g1.txt");
+    display_graph_matrix(g1);
+
+    MATRIX *g2 = load("g2.txt");
+    display_graph_matrix(g2);
+
+    MATRIX *g3 = load("g3.txt");
+    display_graph_matrix(g3);
+
+    printf("%d %d\n", est_sous_graphe_partiel_matrix(g2, g1), est_sous_graphe_partiel_matrix(g3, g1));
     return 0;
 }
