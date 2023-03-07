@@ -631,7 +631,7 @@ LISTE *load_liste(char *nom)
     return G;
 }
 
-/*LISTE *matrix_to_liste(MATRIX *m)
+LISTE *matrix_to_liste(MATRIX *m)
 {
     LISTE *l = graphe_vide_liste();
     *l->vertices = *m->vertices;
@@ -649,7 +649,7 @@ LISTE *load_liste(char *nom)
         }
     }
     return l;
-}*/
+}
 
 /*MATRIX *liste_to_matrix(LISTE *l)
 {
