@@ -884,6 +884,94 @@ int est_sous_graphe_matrix(MATRIX *m1, LISTE *m2)
     return 0;
 }
 
+/**
+ * return 1 if m1 clique of m2, 0 else
+ */
+int est_clique_matrix(MATRIX *m1, MATRIX *m2)
+{
+    if (est_sous_graphe_matrix(m1, m2))
+    {
+        for (int i = 0; i < m1->n; i++)
+        {
+            for (int j = i + 1; j < m1->n; j++)
+            {
+                if (m1->graph[i][j] != 1)
+                {
+                    return 0;
+                }
+            }
+        }
+        return 1;
+    }
+    return 0;
+}
+
+/**
+ * return 1 if l1 clique of l2, 0 else
+ */
+int est_clique_liste(LISTE *l1, LISTE *l2)
+{
+    if (est_sous_graphe_liste(l1, l2))
+    {
+        for (int i = 0; i < l1->n; i++)
+        {
+            for (int j = 0; j < l1->n; j++)
+            {
+                if (i != j)
+                {
+                    for (int k = 0; k < l1->sizes[i]; k++)
+                    {
+                        if (l1->graph[i][k] == j)
+                        {
+                            break;
+                        }
+                        else if (k == l1->sizes[i] - 1)
+                        {
+                            return 0;
+                        }
+                    }
+                }
+            }
+        }
+        return 1;
+    }
+    return 0;
+}
+
+/**
+ * return 1 if m1 stable of m2, 0 else
+ */
+int est_stable_matrix(MATRIX *m1, MATRIX *m2)
+{
+    if (est_sous_graphe_matrix(m1, m2))
+    {
+        for (int i = 0; i < m1->n; i++)
+        {
+            for (int j = i; j < m1->n; j++)
+            {
+                if (m1->graph[i][j] == 1)
+                    return 0;
+            }
+        }
+        return 1;
+    }
+    return 0;
+}
+
+int est_stable_liste(LISTE *l1, LISTE *l2)
+{
+    if (est_sous_graphe_liste(l1, l2))
+    {
+        for (int i = 0; i < l1->n; i++)
+        {
+            if (l1->graph[i][0] != -1)
+                return 0;
+        }
+        return 1;
+    }
+    return 0;
+}
+
 int main()
 {
     MATRIX *m = graphe_vide_matrix();
