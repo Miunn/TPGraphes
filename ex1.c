@@ -157,7 +157,6 @@ void add_sommet_matrix(MATRIX *m, VERTICE s)
     else
     {
         // Vérification de l'absence du sommet
-        printf("Sommet a ajouter:%d %s\n", s.id, s.nom);
         for (int i = 0; i < m->n; i++)
         {
             if (m->vertices[i].id == s.id)
@@ -311,13 +310,11 @@ MATRIX *load(char *nom)
         add_sommet_matrix(m, (VERTICE){name, id});
     }
 
-    printf("%d Sommets:\n", m->n);
     for (int i = 0; i < m->n; i++)
     {
         printf("%d,%s\n", m->vertices[i].id, m->vertices[i].nom);
     }
 
-    printf("\nTOUS LES SOMMETS AJOUTES\n");
     display_graph_matrix(m);
 
     fgets(buff, buff_size, stream);
@@ -356,24 +353,18 @@ MATRIX *load(char *nom)
 
         VERTICE *vA = NULL;
         VERTICE *vB = NULL;
-        printf("%s-%s(%d)\n", nameVA, nameVB, m->n);
         for (int i = 0; i < m->n; i++)
         {
-            printf("n:%s-%s-%s-%d\n", m->vertices[i].nom, nameVA, nameVB, strcmp(m->vertices[i].nom, nameVA));
             if (strcmp(m->vertices[i].nom, nameVA) == 0)
             {
-                printf("Trouve A\n");
                 vA = &m->vertices[i];
             }
             else if (strcmp(m->vertices[i].nom, nameVB) == 0)
             {
-                printf("Trouve B\n");
                 vB = &m->vertices[i];
             }
         }
-        printf("recuperation deux sommets\n");
 
-        printf("ajout arrete: %d - %d\n", vA->id, vB->id);
         if (vA != NULL && vB != NULL)
         {
             add_matrix(m, vA, vB);
@@ -487,7 +478,7 @@ void add_liste(LISTE *G, VERTICE *v1, VERTICE *v2)
     }
 
     G->graph[v1->id] = (int *)realloc(G->graph[v1->id], (taillei + 1) * sizeof(int));
-    printf("reallocation 1 OK\n");
+
     if (G->graph[v1->id][0] == -1)
     {
         G->graph[v1->id][0] = v2->id;
@@ -511,13 +502,10 @@ void add_liste(LISTE *G, VERTICE *v1, VERTICE *v2)
             }
         }
     }
-    printf("juste avant le deuxième sommet\n");
 
     if (v1->id != v2->id)
     {
-        printf("dans le deuxième sommet\n");
         G->graph[v2->id] = (int *)realloc(G->graph[v2->id], (taillej + 1) * sizeof(int));
-        printf("reallocation 2 OK\n");
         if (G->graph[v2->id][0] == -1)
         {
 
@@ -542,7 +530,6 @@ void add_liste(LISTE *G, VERTICE *v1, VERTICE *v2)
             }
         }
     }
-    printf("\n");
 }
 
 void supp_liste(LISTE *G, VERTICE *v1, VERTICE *v2)
@@ -804,7 +791,6 @@ int inclus_aretes_liste(LISTE *l1, LISTE *l2)
         {
             s1 = l1->vertices[i].nom;
             s2 = l1->vertices[l1->graph[i][j]].nom;
-            printf("sommet 1 : %s, sommet 2 : %s\n", s1, s2);
             for (int k = 0; k < l2->n; k++)
             {
                 if (!strcmp(l2->vertices[k].nom, s1))
