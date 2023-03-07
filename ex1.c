@@ -417,24 +417,22 @@ LISTE *graphe_vide_liste()
     return l;
 }
 
-void add_sommet_liste(LISTE *G, VERTICE *v)
+void add_sommet_liste(LISTE *G, VERTICE v)
 {
     if (G->n == 0)
     {
         G->sizes = (int *)calloc(1, sizeof(int));
         G->graph = (int **)malloc(sizeof(int *));
         G->vertices = (VERTICE *)calloc(1, sizeof(VERTICE));
-        v->id = G->n;
 
         G->graph[G->n] = (int *)malloc(sizeof(int));
         G->graph[G->n][0] = -1;
         G->sizes[G->n] = 0;
-        G->vertices[G->n] = *v;
+        G->vertices[G->n] = v;
         G->n++;
     }
     else
     {
-        v->id = G->n;
         G->graph = (int **)realloc(G->graph, (G->n + 1) * sizeof(int *));
         G->sizes = (int *)realloc(G->sizes, (G->n + 1) * sizeof(int));
         G->vertices = (VERTICE *)realloc(G->vertices, (G->n + 1) * sizeof(VERTICE));
@@ -442,7 +440,7 @@ void add_sommet_liste(LISTE *G, VERTICE *v)
         G->graph[G->n] = (int *)malloc(sizeof(int));
         G->graph[G->n][0] = -1;
         G->sizes[G->n] = 0;
-        G->vertices[G->n] = *v;
+        G->vertices[G->n] = (VERTICE){v.nom, v.id};
         G->n++;
     }
 }
@@ -586,33 +584,103 @@ LISTE *load_liste(char *nom)
         return NULL;
     }
 
-    LISTE *G = graphe_vide_liste();
-
+    LISTE *m = graphe_vide_liste();
+    int id;
+    // Ajout des sommets
     for (int i = 0; i < vertices; i++)
     {
-        chars = getline(&buff, &buff_size, stream);
-        int id = atoi(strtok(buff, " "));
-        char *name = strtok(NULL, " ");
-        VERTICE v = {name, id};
-        add_sommet_liste(G, &v);
+        getline(&buff, &buff_size, stream);
+
+        int idLen = 0;
+        for (int i = 0; i < 100; i++) {
+            if (buff[i] == ' ') {
+                break;
+            } else {
+                idLen++;
+            }
+        }
+
+        char *strId = (char *) malloc((idLen+1) * sizeof(char));
+        for (int i = 0; i < idLen; i++) {
+            strId[i] = buff[i];
+        }
+        strId[idLen] = '\0';
+        int nameLen = 0;
+        for (int i = idLen+1; i < 100; i++) {
+            if (buff[i] == '\n') {
+                break;
+            } else {
+                nameLen++;
+            }
+        }
+
+        char *name = (char *) malloc((nameLen+1) * sizeof(char));
+        for (int i = 0; i < nameLen; i++) {
+            name[i] = buff[idLen+i+1];
+        }
+        name[nameLen] = '\0'; // getline leaves a carriage return
+        id = atoi(strId);
+        add_sommet_liste(m, (VERTICE){name, id});
     }
 
-    chars = getline(&buff, &buff_size, stream);
+
+    fgets(buff, buff_size, stream);
     while (chars != -1)
     {
         // Récupération des arretes
-        VERTICE firstedge = {"", atoi(strtok(buff, " "))};
-        VERTICE secondedge = {"", atoi(strtok(NULL, " "))};
-        if (firstedge.id >= 0 && secondedge.id >= 0)
+        int nameALen = 0;
+        for (int i = 0; i < 100; i++) {
+            if (buff[i] == ' ') {
+                break;
+            } else {
+                nameALen++;
+            }
+        }
+
+        char *nameVA = malloc((nameALen+1) * sizeof(char));
+        for (int i = 0; i < nameALen; i++) {
+            nameVA[i] = buff[i];
+        }
+        nameVA[nameALen] = '\0';
+
+        int nameBLen = 0;
+        for (int i = nameALen+1; i < 100; i++) {
+            if (buff[i] == '\n') {
+                break;
+            } else {
+                nameBLen++;
+            }
+        }
+
+        char *nameVB = malloc((nameBLen+1) * sizeof(char));
+        for (int i = 0; i < nameBLen; i++) {
+            nameVB[i] = buff[nameALen + i + 1];
+        }
+        nameVB[nameBLen] = '\0';
+
+        VERTICE *vA = NULL;
+        VERTICE *vB = NULL;
+        for (int i = 0; i < m->n; i++)
         {
-            add_liste(G, &firstedge, &secondedge);
+            if (strcmp(m->vertices[i].nom, nameVA) == 0)
+            {
+                vA = &m->vertices[i];
+            }
+            else if (strcmp(m->vertices[i].nom, nameVB) == 0)
+            {
+                vB = &m->vertices[i];
+            }
+        }
+        if (vA != NULL && vB != NULL)
+        {
+            add_liste(m, vA, vB);
         }
         chars = getline(&buff, &buff_size, stream);
     }
     free(buff);
 
     fclose(stream);
-    return G;
+    return m;
 }
 
 LISTE *matrix_to_liste(MATRIX *m)
@@ -620,7 +688,7 @@ LISTE *matrix_to_liste(MATRIX *m)
     LISTE *l = graphe_vide_liste();
     *l->vertices = *m->vertices;
     for (int i=0;i<m->n;i++){
-        add_sommet_liste(l,&l->vertices[i]);
+        add_sommet_liste(l,l->vertices[i]);
     }
     for (int i = 0; i < m->n; i++)
     {
@@ -638,7 +706,10 @@ LISTE *matrix_to_liste(MATRIX *m)
 /*MATRIX *liste_to_matrix(LISTE *l)
 {
     MATRIX *m = graphe_vide_matrix();
-    add_sommet_matrix(m, l->n);
+    *m->vertices = *l->vertices;
+    for (int i =0; i < l->n; i++) {
+        add_sommet_matrix(m, l->vertices[i]);
+    }
     int size;
     for (int i = 0; i < l->n; i++)
     {
@@ -1092,8 +1163,11 @@ int main()
     else
         printf("non inclus\n");*/
 
-    /*MATRIX *lm = load("d.txt");
-    display_graph_matrix(lm);*/
+    /*MATRIX *lm = load("g1.txt");
+    display_graph_matrix(lm);
+
+    LISTE *l = load_liste("g1.txt");
+    display_graph_liste(l);*/
 
     /*LISTE *l = matrix_to_liste(lm);
     display_graph_liste(l);*/
@@ -1113,13 +1187,8 @@ int main()
 
 
     MATRIX *g1 = load("g1.txt");
-    display_graph_matrix(g1);
-
     MATRIX *g2 = load("g2.txt");
-    display_graph_matrix(g2);
-
     MATRIX *g3 = load("g3.txt");
-    display_graph_matrix(g3);
 
     printf("%d %d\n", est_sous_graphe_partiel_matrix(g2, g1), est_sous_graphe_partiel_matrix(g3, g1));
     return 0;
