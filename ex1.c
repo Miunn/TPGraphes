@@ -301,11 +301,12 @@ MATRIX *load(char *nom)
             }
         }
 
-        char *name = (char *) malloc(nameLen * sizeof(char));
-        for (int i = 0; i < nameLen; i++) {
-            name[i] = buff[idLen+i+1];
+        char *name = (char *)malloc(nameLen * sizeof(char));
+        for (int i = 0; i < nameLen; i++)
+        {
+            name[i] = buff[idLen + i + 1];
         }
-        name[nameLen-1] = '\0'; // getline leaves a carriage return
+        name[nameLen - 1] = '\0'; // getline leaves a carriage return
         id = atoi(strId);
         add_sommet_matrix(m, (VERTICE){name, id});
     }
@@ -322,34 +323,44 @@ MATRIX *load(char *nom)
     {
         // Récupération des arretes
         int nameALen = 0;
-        for (int i = 0; i < 100; i++) {
-            if (buff[i] == ' ') {
+        for (int i = 0; i < 100; i++)
+        {
+            if (buff[i] == ' ')
+            {
                 break;
-            } else {
+            }
+            else
+            {
                 nameALen++;
             }
         }
 
-        char *nameVA = malloc((nameALen+1) * sizeof(char));
-        for (int i = 0; i < nameALen; i++) {
+        char *nameVA = malloc((nameALen + 1) * sizeof(char));
+        for (int i = 0; i < nameALen; i++)
+        {
             nameVA[i] = buff[i];
         }
         nameVA[nameALen] = '\0';
 
         int nameBLen = 0;
-        for (int i = nameALen+1; i < 100; i++) {
-            if (buff[i] == '\n') {
+        for (int i = nameALen + 1; i < 100; i++)
+        {
+            if (buff[i] == '\n')
+            {
                 break;
-            } else {
+            }
+            else
+            {
                 nameBLen++;
             }
         }
 
         char *nameVB = malloc(nameBLen * sizeof(char));
-        for (int i = 0; i < nameBLen+1; i++) {
+        for (int i = 0; i < nameBLen + 1; i++)
+        {
             nameVB[i] = buff[nameALen + i + 1];
         }
-        nameVB[nameBLen-1] = '\0';
+        nameVB[nameBLen - 1] = '\0';
 
         VERTICE *vA = NULL;
         VERTICE *vB = NULL;
@@ -835,7 +846,7 @@ int inclus_aretes_liste(LISTE *l1, LISTE *l2)
     return 1;
 }
 
-int est_patiel_matrix(MATRIX *m1, MATRIX *m2)
+int est_partiel_matrix(MATRIX *m1, MATRIX *m2)
 {
     int segaux = 0;
     if (inclus_sommet_matrix(m1, m2, 0) && !inclus_sommet_matrix(m1, m2, 1))
@@ -845,13 +856,31 @@ int est_patiel_matrix(MATRIX *m1, MATRIX *m2)
     return 0;
 }
 
-int est_patiel_liste(LISTE *m1, LISTE *m2)
+int est_partiel_liste(LISTE *m1, LISTE *m2)
 {
     int segaux = 0;
     if (inclus_sommet_liste(m1, m2, 0) && !inclus_sommet_liste(m1, m2, 1))
         segaux = 1;
     if (segaux && inclus_aretes_liste(m1, m2))
         return 1;
+    return 0;
+}
+
+int est_sous_graphe_liste(LISTE *l1, LISTE *l2)
+{
+    if (inclus_sommet_liste(l1, l2, 1) && inclus_aretes_liste(l1, l2))
+    {
+        return 1;
+    }
+    return 0;
+}
+
+int est_sous_graphe_matrix(MATRIX *m1, LISTE *m2)
+{
+    if (inclus_sommet_matrix(m1, m2, 1) && inclus_aretes_matrix(m1, m2))
+    {
+        return 1;
+    }
     return 0;
 }
 
