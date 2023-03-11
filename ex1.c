@@ -1104,7 +1104,7 @@ int est_stable_matrix(MATRIX *m1, MATRIX *m2)
     return 0;
 }
 
-int calcul_distance_matrix(MATRIX *m, VERTICE *a, VERTICE *b, VERTICE *ban, int n_ban)
+int calcul_distance_matrix(MATRIX *m, VERTICE *a, VERTICE *b, VERTICE **ban, int n_ban)
 {
     // Get a's neigbours
     VERTICE **neighbors = (VERTICE **)malloc(m->n * sizeof(VERTICE *));
@@ -1120,7 +1120,7 @@ int calcul_distance_matrix(MATRIX *m, VERTICE *a, VERTICE *b, VERTICE *ban, int 
             isBan = 0;
             for (int j = 0; j < n_ban; j++)
             {
-                if (strcmp(ban[i].nom, m->vertices[i].nom) == 0)
+                if (strcmp(ban[j]->nom, m->vertices[i].nom) == 0)
                 {
                     isBan = 1;
                 }
@@ -1132,19 +1132,20 @@ int calcul_distance_matrix(MATRIX *m, VERTICE *a, VERTICE *b, VERTICE *ban, int 
             }
         }
     }
-    printf("nban:%d\n", n_ban);
-    ban[n_ban] = (VERTICE){a->nom, a->id};
+    ban[n_ban] = a;
     n_ban++;
-    printf("anom:%s\n", a->nom);
-    printf("apres ban: %s\n", ban[n_ban].nom);
-    for (int i = 0; i < m->n; i++) {
-        if (neighbors[i] != NULL) {
-            if (strcmp(neighbors[i]->nom, b->nom) == 0) {
+    for (int i = 0; i < m->n; i++)
+    {
+        if (neighbors[i] != NULL)
+        {
+            if (strcmp(neighbors[i]->nom, b->nom) == 0)
+            {
                 printf("Trouve\n");
                 free(neighbors);
                 return n_ban;
-            } else {
-                printf("appel recursif\n");
+            }
+            else
+            {
                 return calcul_distance_matrix(m, neighbors[i], b, ban, n_ban);
             }
         }
@@ -1159,16 +1160,17 @@ int calcul_distance_matrix(MATRIX *m, VERTICE *a, VERTICE *b, VERTICE *ban, int 
  */
 void calculs_distances_matrix(MATRIX *m, int *dists)
 {
-    VERTICE *ban = (VERTICE *)malloc((m->n - 1) * sizeof(VERTICE));
-    for (int i = 0; i < m->n - 1; i++) {
-        ban[i] = (VERTICE){NULL, -1};
+    VERTICE **ban = (VERTICE **)malloc((m->n - 1) * sizeof(VERTICE *));
+    for (int i = 0; i < m->n - 1; i++)
+    {
+        ban[i] = NULL;
     }
-    printf("%d\n", m->n);
     for (int i = 0; i < m->n; i++)
     {
         for (int j = i + 1; j < m->n; j++)
         {
-            calcul_distance_matrix(m, &m->vertices[i], &m->vertices[j], ban, 0);
+            printf("Calcul de distance entre %s et %s\n", m->vertices[i].nom, m->vertices[j].nom);
+            printf("Distance:%d\n", calcul_distance_matrix(m, &m->vertices[i], &m->vertices[j], ban, 0));
         }
     }
 }
@@ -1192,6 +1194,12 @@ int main()
     MATRIX *m = graphe_vide_matrix();
     VERTICE verticeA = {"Valenciennes", 0};
     VERTICE verticeB = {"Lille", 1};
+
+    MATRIX *g1 = load("g1.txt");
+    display_graph_matrix(g1);
+
+    int *dists = (int *)malloc(((g1->n * (g1->n - 1)) / 2) * sizeof(int));
+    calculs_distances_matrix(g1, dists);
 
     /*add_sommet_matrix(m, verticeA);
     add_sommet_matrix(m, verticeB);
@@ -1309,10 +1317,7 @@ int main()
 
     printf("%d %d\n", est_sous_graphe_partiel_matrix(g2, g1), est_sous_graphe_partiel_matrix(g3, g1));*/
 
-    MATRIX *g1 = load("g1.txt");
-    int *dists = (int *)malloc(((g1->n * (g1->n - 1)) / 2) * sizeof(int));
-    calculs_distances_matrix(g1, dists);
-    //calcul_distance_matrix(g1, &g1->vertices[0], &g1->vertices[1], ban, 0);
-    // free(dists);
+    // calcul_distance_matrix(g1, &g1->vertices[0], &g1->vertices[1], ban, 0);
+    //  free(dists);
     return 0;
 }
