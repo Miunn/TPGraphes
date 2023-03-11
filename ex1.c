@@ -1104,7 +1104,7 @@ int est_stable_matrix(MATRIX *m1, MATRIX *m2)
     return 0;
 }
 
-int calcul_distance_matrix(MATRIX *m, VERTICE *a, VERTICE *b, VERTICE **ban, int n_ban)
+int calcul_distance_matrix(MATRIX *m, VERTICE *a, VERTICE *b, VERTICE **ban, int n_ban,  int d)
 {
     // Get a's neigbours
     VERTICE **neighbors = (VERTICE **)malloc(m->n * sizeof(VERTICE *));
@@ -1134,22 +1134,34 @@ int calcul_distance_matrix(MATRIX *m, VERTICE *a, VERTICE *b, VERTICE **ban, int
     }
     ban[n_ban] = a;
     n_ban++;
+
+    int *all_dists = (int*) calloc((m->n), sizeof(int));
     for (int i = 0; i < m->n; i++)
     {
         if (neighbors[i] != NULL)
         {
             if (strcmp(neighbors[i]->nom, b->nom) == 0)
             {
-                printf("Trouve\n");
                 free(neighbors);
-                return n_ban;
+                return d + 1;
             }
             else
             {
-                return calcul_distance_matrix(m, neighbors[i], b, ban, n_ban);
+                int r = calcul_distance_matrix(m, neighbors[i], b, ban, n_ban, d+1);
+                if (r > -1) {
+                    all_dists[i] = r;
+                }
             }
         }
     }
+
+    int min = all_dists[0];
+    for (int i = 1; i < m->n; i++) {
+        if (all_dists[i] < min && all_dists[i] > 0) {
+            min = all_dists[i];
+        }
+    }
+    return min;
 }
 
 /**
@@ -1169,8 +1181,8 @@ void calculs_distances_matrix(MATRIX *m, int *dists)
     {
         for (int j = i + 1; j < m->n; j++)
         {
-            printf("Calcul de distance entre %s et %s\n", m->vertices[i].nom, m->vertices[j].nom);
-            printf("Distance:%d\n", calcul_distance_matrix(m, &m->vertices[i], &m->vertices[j], ban, 0));
+            printf("Distance entre %s et %s -> ", m->vertices[i].nom, m->vertices[j].nom);
+            printf("%d\n", calcul_distance_matrix(m, &m->vertices[i], &m->vertices[j], ban, 0, 0));
         }
     }
 }
