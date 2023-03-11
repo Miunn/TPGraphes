@@ -1177,12 +1177,16 @@ void calculs_distances_matrix(MATRIX *m, int *dists)
     {
         ban[i] = NULL;
     }
+
+    int n = 0;
+
+    // Parcours de la matrice stritement supérieure
     for (int i = 0; i < m->n; i++)
     {
         for (int j = i + 1; j < m->n; j++)
         {
-            printf("Distance entre %s et %s -> ", m->vertices[i].nom, m->vertices[j].nom);
-            printf("%d\n", calcul_distance_matrix(m, &m->vertices[i], &m->vertices[j], ban, 0, 0));
+            dists[n] = calcul_distance_matrix(m, &m->vertices[i], &m->vertices[j], ban, 0, 0);
+            n++;
         }
     }
 }
@@ -1201,6 +1205,23 @@ int est_stable_liste(LISTE *l1, LISTE *l2)
     return 0;
 }
 
+/**
+ * @brief Compute the diameter for the graph m
+ * 
+ * @param m The graph represented in matrix
+ * @param dists Array of ((m->n * (m->n - 1)) / 2) length (amount of pairs in the graph)
+ * @return int The diameter of the graph
+ */
+int diametre(MATRIX *m, int *dists) {
+    int max = dists[0];
+    for (int i = 1; i < (m->n) * (m->n - 1) / 2; i++) {
+        if (dists[i] > max) {
+            max = dists[i];
+        }
+    }
+    return max;
+}
+
 int main()
 {
     MATRIX *m = graphe_vide_matrix();
@@ -1212,6 +1233,8 @@ int main()
 
     int *dists = (int *)malloc(((g1->n * (g1->n - 1)) / 2) * sizeof(int));
     calculs_distances_matrix(g1, dists);
+
+    printf("Diametre: %d\n", diametre(g1, dists));
 
     /*add_sommet_matrix(m, verticeA);
     add_sommet_matrix(m, verticeB);
