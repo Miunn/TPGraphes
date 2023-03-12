@@ -1121,6 +1121,7 @@ int calcul_distance_matrix(MATRIX *m, VERTICE *a, VERTICE *b, VERTICE **ban, int
         neighbors[i] = NULL;
     }
     int isBan;
+    int noNeighbors = 1;
     for (int i = 0; i < m->n; i++)
     {
         if (m->graph[a->id][i] == 1 && i != a->id)
@@ -1137,6 +1138,7 @@ int calcul_distance_matrix(MATRIX *m, VERTICE *a, VERTICE *b, VERTICE **ban, int
             if (isBan == 0)
             {
                 neighbors[i] = &m->vertices[i];
+                noNeighbors = 0;
             }
         }
     }
@@ -1156,15 +1158,19 @@ int calcul_distance_matrix(MATRIX *m, VERTICE *a, VERTICE *b, VERTICE **ban, int
             else
             {
                 int r = calcul_distance_matrix(m, neighbors[i], b, ban, n_ban, d+1);
-                if (r > -1) {
+                if (r > 0) {
                     all_dists[i] = r;
                 }
             }
         }
     }
 
-    int min = all_dists[0];
-    for (int i = 1; i < m->n; i++) {
+    if (noNeighbors == 1) {
+        return -1;
+    }
+
+    int min = m->n+1;   // Distance supposée impossible pour un graphe connexe
+    for (int i = 0; i < m->n; i++) {
         if (all_dists[i] < min && all_dists[i] > 0) {
             min = all_dists[i];
         }
@@ -1272,10 +1278,6 @@ int donne_centre(MATRIX *m, int *dists, int *centres_list, int *m_radius) {
 
 int main()
 {
-    MATRIX *m = graphe_vide_matrix();
-    VERTICE verticeA = {"Valenciennes", 0};
-    VERTICE verticeB = {"Lille", 1};
-
     MATRIX *g1 = load("g1.txt");
     display_graph_matrix(g1);
 
