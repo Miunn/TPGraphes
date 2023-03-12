@@ -1270,10 +1270,30 @@ int excentricite(VERTICE *s, DIST **dists, int n_dists) {
  * @param m_radius Output int for graph radius
  * @return int Amount of centres
  */
-int donne_centre(MATRIX *m, int *dists, int *centres_list, int *m_radius) {
+int donne_centre(MATRIX *m, DIST **dists, VERTICE **centres_list, int *m_radius) {
+    int n = 0;
     
+    int n_dists =  (m->n * (m->n - 1)) / 2;
 
-    return 0;
+    int *eccentricities = (int*)malloc(m->n * sizeof(int));
+    eccentricities[0] = excentricite(&m->vertices[0], dists, n_dists);
+    int min_eccentricity = eccentricities[0];
+    for (int i = 1; i < m->n; i ++) {
+        eccentricities[i] = excentricite(&m->vertices[i], dists, n_dists);
+        if (eccentricities[i] < min_eccentricity) {
+            min_eccentricity = eccentricities[i];
+        }
+    }
+
+    for (int i = 0; i < m->n; i++) {
+        if (eccentricities[i] == min_eccentricity) {
+            centres_list[n] = &m->vertices[i];
+            n++;
+        }
+    }
+
+    *m_radius = min_eccentricity;
+    return n;
 }
 
 int main()
@@ -1290,8 +1310,20 @@ int main()
 
     DIST *diameter = donne_diametre(g1, dists);
     printf("Diametre: %d (%s - %s)\n", diameter->d, diameter->start->nom, diameter->end->nom);
-    printf("Eccentricity of %s: %d\n", g1->vertices[3].nom, excentricite(&g1->vertices[3], dists, (g1->n * (g1->n - 1)) / 2));
+    printf("Eccentricity of %s: %d\n", g1->vertices[0].nom, excentricite(&g1->vertices[0], dists, (g1->n * (g1->n - 1)) / 2));
 
+    VERTICE **centres = (VERTICE **) malloc(g1->n * sizeof(VERTICE *));
+    for (int i = 0; i < g1->n; i++) {
+        centres[i] = NULL;
+    }
+    int radius = 0;
+    int n_centres = donne_centre(g1, dists, centres, &radius);
+
+    for (int i = 0; i < n_centres; i++) {
+        printf("Centre: %s\n", centres[i]->nom);
+    }
+
+    printf("Rayon: %d\n", radius);
 
     /*add_sommet_matrix(m, verticeA);
     add_sommet_matrix(m, verticeB);
