@@ -34,6 +34,14 @@ typedef struct
     int **graph;
 } LISTE;
 
+typedef struct
+{
+    VERTICE *start;
+    VERTICE *end;
+    int d;
+} DIST;
+
+
 void display_graph_matrix(MATRIX *m)
 {
     printf("%dx%d matrix\n", m->n, m->n);
@@ -1170,7 +1178,7 @@ int calcul_distance_matrix(MATRIX *m, VERTICE *a, VERTICE *b, VERTICE **ban, int
  * @param m Graph
  * @param dists Output array of distances
  */
-void calculs_distances_matrix(MATRIX *m, int *dists)
+void calculs_distances_matrix(MATRIX *m, DIST **dists)
 {
     VERTICE **ban = (VERTICE **)malloc((m->n - 1) * sizeof(VERTICE *));
     for (int i = 0; i < m->n - 1; i++)
@@ -1185,7 +1193,11 @@ void calculs_distances_matrix(MATRIX *m, int *dists)
     {
         for (int j = i + 1; j < m->n; j++)
         {
-            dists[n] = calcul_distance_matrix(m, &m->vertices[i], &m->vertices[j], ban, 0, 0);
+            DIST *d = (DIST *) malloc(sizeof(DIST));
+            d->start = &m->vertices[i];
+            d->end = &m->vertices[j];
+            d->d = calcul_distance_matrix(m, &m->vertices[i], &m->vertices[j], ban, 0, 0);
+            dists[n] = d;
             n++;
         }
     }
@@ -1212,14 +1224,50 @@ int est_stable_liste(LISTE *l1, LISTE *l2)
  * @param dists Array of ((m->n * (m->n - 1)) / 2) length (amount of pairs in the graph)
  * @return int The diameter of the graph
  */
-int diametre(MATRIX *m, int *dists) {
-    int max = dists[0];
+DIST *donne_diametre(MATRIX *m, DIST **dists) {
+    DIST *max = dists[0];
     for (int i = 1; i < (m->n) * (m->n - 1) / 2; i++) {
-        if (dists[i] > max) {
+        if (dists[i]->d > max->d) {
             max = dists[i];
         }
     }
     return max;
+}
+
+/**
+ * @brief Compute the eccentricity for a given vertice S
+ * 
+ * @param s The VERTICE to long for
+ * @param dists Array of all pairs distances
+ * @param n_dists number of distances
+ * @return int Graph's eccentricity 
+ */
+int excentricite(VERTICE *s, DIST **dists, int n_dists) {
+    int eccentricity = 0;
+
+    for (int i = 0; i < n_dists; i++) {
+        if (strcmp(dists[i]->start->nom, s->nom) == 0 || strcmp(dists[i]->end->nom, s->nom) == 0) {
+            if (dists[i]->d > eccentricity) {
+                eccentricity = dists[i]->d;
+            }
+        }
+    }
+    return eccentricity;
+}
+
+/**
+ * @brief Compute the amount of centres for the graph m and it's radius
+ * 
+ * @param m The graph under matrix struct
+ * @param dists Distances for each pair
+ * @param centres_list Output array for centres
+ * @param m_radius Output int for graph radius
+ * @return int Amount of centres
+ */
+int donne_centre(MATRIX *m, int *dists, int *centres_list, int *m_radius) {
+    
+
+    return 0;
 }
 
 int main()
@@ -1231,10 +1279,17 @@ int main()
     MATRIX *g1 = load("g1.txt");
     display_graph_matrix(g1);
 
-    int *dists = (int *)malloc(((g1->n * (g1->n - 1)) / 2) * sizeof(int));
+    DIST **dists = (DIST **)malloc(((g1->n * (g1->n - 1)) / 2) * sizeof(DIST *));
     calculs_distances_matrix(g1, dists);
 
-    printf("Diametre: %d\n", diametre(g1, dists));
+    for (int i = 0; i < ((g1->n * (g1->n - 1)) / 2); i++) {
+        printf("[%s - %s] -> %d\n", dists[i]->start->nom, dists[i]->end->nom, dists[i]->d);
+    }
+
+    DIST *diameter = donne_diametre(g1, dists);
+    printf("Diametre: %d (%s - %s)\n", diameter->d, diameter->start->nom, diameter->end->nom);
+    printf("Eccentricity of %s: %d\n", g1->vertices[3].nom, excentricite(&g1->vertices[3], dists, (g1->n * (g1->n - 1)) / 2));
+
 
     /*add_sommet_matrix(m, verticeA);
     add_sommet_matrix(m, verticeB);
