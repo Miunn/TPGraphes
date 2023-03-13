@@ -1296,6 +1296,22 @@ int donne_centre(MATRIX *m, DIST **dists, VERTICE **centres_list, int *m_radius)
     return n;
 }
 
+/**
+ * @brief Compute the level of each vertice
+ * 
+ * @param m Matrix for the graph
+ * @param degs Output array for the levels (must be initialized with zeros)
+ */
+void calcul_degre(MATRIX *m, int *degs) {
+    for (int i = 0; i < m->n; i++) {
+        for (int j = 0; j < m->n; j++) {
+            if (m->graph[i][j] == 1) {
+                degs[i]++;
+            }
+        }
+    }
+}
+
 int main()
 {
     MATRIX *g1 = load("g1.txt");
@@ -1310,7 +1326,7 @@ int main()
 
     DIST *diameter = donne_diametre(g1, dists);
     printf("Diametre: %d (%s - %s)\n", diameter->d, diameter->start->nom, diameter->end->nom);
-    printf("Eccentricity of %s: %d\n", g1->vertices[0].nom, excentricite(&g1->vertices[0], dists, (g1->n * (g1->n - 1)) / 2));
+    printf("Excentricite de %s: %d\n", g1->vertices[0].nom, excentricite(&g1->vertices[0], dists, (g1->n * (g1->n - 1)) / 2));
 
     VERTICE **centres = (VERTICE **) malloc(g1->n * sizeof(VERTICE *));
     for (int i = 0; i < g1->n; i++) {
@@ -1324,6 +1340,12 @@ int main()
     }
 
     printf("Rayon: %d\n", radius);
+
+    int *degres = (int *) calloc(g1->n, sizeof(int));
+    calcul_degre(g1, degres);
+    for (int i = 0; i < g1->n; i++) {
+        printf("Degre de %s: %d\n", g1->vertices[i].nom, degres[i]);
+    }
 
     /*add_sommet_matrix(m, verticeA);
     add_sommet_matrix(m, verticeB);
