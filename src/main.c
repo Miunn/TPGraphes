@@ -13,11 +13,11 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "../headers/struct.h"
-#include "../headers/general.h"
-#include "../headers/matrix.h"
-#include "../headers/list.h"
-#include "../headers/io.h"
+#include "../includes/struct.h"
+#include "../includes/general.h"
+#include "../includes/matrix.h"
+#include "../includes/list.h"
+#include "../includes/io.h"
 
 
 int main()

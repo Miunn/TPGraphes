@@ -1,7 +1,7 @@
 #include <string.h>
 
-#include "../headers/struct.h"
-#include "../headers/list.h"
+#include "../includes/struct.h"
+#include "../includes/list.h"
 
 /**
  * @brief Compute the eccentricity for a given vertice S

@@ -1,7 +1,7 @@
 #ifndef DEF_MATRIX
 #define DEF_MATRIX
 
-#include "../headers/struct.h"
+#include "../includes/struct.h"
 
 void display_graph_matrix(MATRIX *m);
 void free_matrix(MATRIX *m);

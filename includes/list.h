@@ -1,7 +1,7 @@
 #ifndef DEF_LIST
 #define DEF_LIST
 
-#include "../headers/struct.h"
+#include "../includes/struct.h"
 
 void display_graph_liste(LISTE *l);
 void free_liste(LISTE *l);

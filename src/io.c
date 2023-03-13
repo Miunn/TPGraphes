@@ -1,9 +1,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "../headers/struct.h"
-#include "../headers/matrix.h"
-#include "../headers/list.h"
+#include "../includes/struct.h"
+#include "../includes/matrix.h"
+#include "../includes/list.h"
 
 /**
  * @brief Load a data file representing a graph based on this structure:

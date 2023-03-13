@@ -1,8 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "../headers/struct.h"
-#include "../headers/general.h"
+#include "../includes/struct.h"
+#include "../includes/general.h"
 
 void display_graph_matrix(MATRIX *m)
 {

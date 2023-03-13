@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-#include "../headers/struct.h"
+#include "../includes/struct.h"
 
 int gen_matrix(int seed) {
     srand(seed);
