@@ -363,7 +363,7 @@ int est_stable_matrix(MATRIX *m1, MATRIX *m2)
     return 0;
 }
 
-int calcul_distance_matrix(MATRIX *m, VERTICE *a, VERTICE *b, VERTICE **ban, int n_ban,  int d)
+int calcul_distance_matrix(MATRIX *m, VERTICE *a, VERTICE *b, VERTICE **ban, int n_ban, int d)
 {
     // Get a's neigbours
     VERTICE **neighbors = (VERTICE **)malloc(m->n * sizeof(VERTICE *));
@@ -396,7 +396,7 @@ int calcul_distance_matrix(MATRIX *m, VERTICE *a, VERTICE *b, VERTICE **ban, int
     ban[n_ban] = a;
     n_ban++;
 
-    int *all_dists = (int*) calloc((m->n), sizeof(int));
+    int *all_dists = (int *)calloc((m->n), sizeof(int));
     for (int i = 0; i < m->n; i++)
     {
         if (neighbors[i] != NULL)
@@ -408,21 +408,25 @@ int calcul_distance_matrix(MATRIX *m, VERTICE *a, VERTICE *b, VERTICE **ban, int
             }
             else
             {
-                int r = calcul_distance_matrix(m, neighbors[i], b, ban, n_ban, d+1);
-                if (r > 0) {
+                int r = calcul_distance_matrix(m, neighbors[i], b, ban, n_ban, d + 1);
+                if (r > 0)
+                {
                     all_dists[i] = r;
                 }
             }
         }
     }
 
-    if (noNeighbors == 1) {
+    if (noNeighbors == 1)
+    {
         return -1;
     }
 
-    int min = m->n+1;   // Distance supposée impossible pour un graphe connexe
-    for (int i = 0; i < m->n; i++) {
-        if (all_dists[i] < min && all_dists[i] > 0) {
+    int min = m->n + 1; // Distance supposée impossible pour un graphe connexe
+    for (int i = 0; i < m->n; i++)
+    {
+        if (all_dists[i] < min && all_dists[i] > 0)
+        {
             min = all_dists[i];
         }
     }
@@ -450,7 +454,7 @@ void calculs_distances_matrix(MATRIX *m, DIST **dists)
     {
         for (int j = i + 1; j < m->n; j++)
         {
-            DIST *d = (DIST *) malloc(sizeof(DIST));
+            DIST *d = (DIST *)malloc(sizeof(DIST));
             d->start = &m->vertices[i];
             d->end = &m->vertices[j];
             d->d = calcul_distance_matrix(m, &m->vertices[i], &m->vertices[j], ban, 0, 0);
@@ -462,15 +466,18 @@ void calculs_distances_matrix(MATRIX *m, DIST **dists)
 
 /**
  * @brief Compute the diameter for the graph m
- * 
+ *
  * @param m The graph represented in matrix
  * @param dists Array of ((m->n * (m->n - 1)) / 2) length (amount of pairs in the graph)
  * @return int The diameter of the graph
  */
-DIST *donne_diametre_matrix(MATRIX *m, DIST **dists) {
+DIST *donne_diametre_matrix(MATRIX *m, DIST **dists)
+{
     DIST *max = dists[0];
-    for (int i = 1; i < (m->n) * (m->n - 1) / 2; i++) {
-        if (dists[i]->d > max->d) {
+    for (int i = 1; i < (m->n) * (m->n - 1) / 2; i++)
+    {
+        if (dists[i]->d > max->d)
+        {
             max = dists[i];
         }
     }
@@ -479,30 +486,35 @@ DIST *donne_diametre_matrix(MATRIX *m, DIST **dists) {
 
 /**
  * @brief Compute the amount of centres for the graph m and it's radius
- * 
+ *
  * @param m The graph under matrix struct
  * @param dists Distances for each pair
  * @param centres_list Output array for centres
  * @param m_radius Output int for graph radius
  * @return int Amount of centres
  */
-int donne_centre_matrix(MATRIX *m, DIST **dists, VERTICE **centres_list, int *m_radius) {
+int donne_centre_matrix(MATRIX *m, DIST **dists, VERTICE **centres_list, int *m_radius)
+{
     int n = 0;
-    
-    int n_dists =  (m->n * (m->n - 1)) / 2;
 
-    int *eccentricities = (int*)malloc(m->n * sizeof(int));
+    int n_dists = (m->n * (m->n - 1)) / 2;
+
+    int *eccentricities = (int *)malloc(m->n * sizeof(int));
     eccentricities[0] = excentricite(&m->vertices[0], dists, n_dists);
     int min_eccentricity = eccentricities[0];
-    for (int i = 1; i < m->n; i ++) {
+    for (int i = 1; i < m->n; i++)
+    {
         eccentricities[i] = excentricite(&m->vertices[i], dists, n_dists);
-        if (eccentricities[i] < min_eccentricity) {
+        if (eccentricities[i] < min_eccentricity)
+        {
             min_eccentricity = eccentricities[i];
         }
     }
 
-    for (int i = 0; i < m->n; i++) {
-        if (eccentricities[i] == min_eccentricity) {
+    for (int i = 0; i < m->n; i++)
+    {
+        if (eccentricities[i] == min_eccentricity)
+        {
             centres_list[n] = &m->vertices[i];
             n++;
         }
@@ -514,36 +526,45 @@ int donne_centre_matrix(MATRIX *m, DIST **dists, VERTICE **centres_list, int *m_
 
 /**
  * @brief Compute the level of each vertice
- * 
+ *
  * @param m Matrix for the graph
  * @param degs Output array for the levels (must be initialized with zeros)
  */
-void calcul_degre_matrix(MATRIX *m, int *degs) {
-    for (int i = 0; i < m->n; i++) {
-        for (int j = 0; j < m->n; j++) {
-            if (m->graph[i][j] == 1) {
+void calcul_degre_matrix(MATRIX *m, int *degs)
+{
+    for (int i = 0; i < m->n; i++)
+    {
+        for (int j = 0; j < m->n; j++)
+        {
+            if (m->graph[i][j] == 1)
+            {
                 degs[i]++;
             }
         }
     }
 }
 
-int donne_centre_degre_matrix(MATRIX *m, VERTICE **centres_list, int *deg_max) {
+int donne_centre_degre_matrix(MATRIX *m, VERTICE **centres_list, int *deg_max)
+{
     int n = 0;
-    
-    int n_dists =  (m->n * (m->n - 1)) / 2;
 
-    int *degs = (int*)calloc(m->n, sizeof(int));
+    int n_dists = (m->n * (m->n - 1)) / 2;
+
+    int *degs = (int *)calloc(m->n, sizeof(int));
     calcul_degre_matrix(m, degs);
     int max_deg = degs[0];
-    for (int i = 1; i < m->n; i ++) {
-        if (degs[i] > max_deg) {
+    for (int i = 1; i < m->n; i++)
+    {
+        if (degs[i] > max_deg)
+        {
             max_deg = degs[i];
         }
     }
 
-    for (int i = 0; i < m->n; i++) {
-        if (degs[i] == max_deg) {
+    for (int i = 0; i < m->n; i++)
+    {
+        if (degs[i] == max_deg)
+        {
             centres_list[n] = &m->vertices[i];
             n++;
         }
