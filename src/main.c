@@ -2,7 +2,7 @@
  * @file TP - Graphes BOUDADI Liam - CAULIER Remi.c
  * @author BOUDADI Liam & CAULIER Rémi
  * @brief 1er fichier de l'avancement du TP
- * @version 1.0
+ * @version 2.0
  * @date 2023-02-07
  *
  * @copyright Copyright (c) 2023
