@@ -71,6 +71,11 @@ void analyse_graph(char *path) {
         printf("%s\t", centres[i]->nom);
     }
 
+    for (int i = 0; i < n_dists; i++) {
+        free(dists[i]);
+    }
+    free(dists);
+
     printf("\n------------------------\n");
     printf("----------Rayon---------\n");
 
@@ -98,6 +103,10 @@ void analyse_graph(char *path) {
     printf("\n");
     printf("Degré max: %d\n", deg_max);
 
+    printf("------------------------\n");
+
+    free(centres);  // Vertices struct in centres are vertices from matrix so we only free the array
+    free_matrix(m);
 }
 
 int main()
