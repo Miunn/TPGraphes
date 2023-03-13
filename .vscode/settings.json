@@ -1,5 +1,10 @@
 {
     "files.associations": {
-        "typeinfo": "c"
+        "typeinfo": "c",
+        "struct.h": "c",
+        "stdlib.h": "c",
+        "list.h": "c",
+        "matrix.h": "c",
+        "general.h": "c"
     }
 }
