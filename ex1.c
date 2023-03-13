@@ -1312,6 +1312,31 @@ void calcul_degre(MATRIX *m, int *degs) {
     }
 }
 
+int donne_centre_degre(MATRIX *m, VERTICE **centres_list, int *deg_max) {
+    int n = 0;
+    
+    int n_dists =  (m->n * (m->n - 1)) / 2;
+
+    int *degs = (int*)calloc(m->n, sizeof(int));
+    calcul_degre(m, degs);
+    int max_deg = degs[0];
+    for (int i = 1; i < m->n; i ++) {
+        if (degs[i] > max_deg) {
+            max_deg = degs[i];
+        }
+    }
+
+    for (int i = 0; i < m->n; i++) {
+        if (degs[i] == max_deg) {
+            centres_list[n] = &m->vertices[i];
+            n++;
+        }
+    }
+
+    *deg_max = max_deg;
+    return n;
+}
+
 int main()
 {
     MATRIX *g1 = load("g1.txt");
@@ -1345,6 +1370,13 @@ int main()
     calcul_degre(g1, degres);
     for (int i = 0; i < g1->n; i++) {
         printf("Degre de %s: %d\n", g1->vertices[i].nom, degres[i]);
+    }
+
+    int deg_max;
+    int n_centres_deg = donne_centre_degre(g1, centres, &deg_max);
+    printf("Deg max: %d\n", deg_max);
+    for (int i = 0; i < n_centres_deg; i++) {
+        printf("CentreDeg: %s\n", centres[i]->nom);
     }
 
     /*add_sommet_matrix(m, verticeA);
