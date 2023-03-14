@@ -33,6 +33,14 @@ int main()
     LISTE *l = load_liste("g1.txt");
 
     display_graph_liste(l);
-    save_list(l, "savelist.txt");
+    //save_list(l, "savelist.txt");
+
+    MATRIX *m = liste_to_matrix(l);
+
+    display_graph_matrix(m);
+
+    free_liste(l);
+    free_matrix(m);
+
     return 0;
 }

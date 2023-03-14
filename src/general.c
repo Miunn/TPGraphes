@@ -5,6 +5,7 @@
 #include "../includes/struct.h"
 #include "../includes/matrix.h"
 #include "../includes/list.h"
+#include "../includes/io.h"
 
 /**
  * @brief Compute the eccentricity for a given vertice S
@@ -29,42 +30,18 @@ int excentricite(VERTICE *s, DIST **dists, int n_dists) {
 
 LISTE *matrix_to_liste(MATRIX *m)
 {
-    LISTE *l = graphe_vide_liste();
-    *l->vertices = *m->vertices;
-    for (int i = 0; i < m->n; i++)
-    {
-        add_sommet_liste(l, l->vertices[i]);
-    }
-    for (int i = 0; i < m->n; i++)
-    {
-        for (int j = 0; j < i + 1; j++)
-        {
-            if (m->graph[j][i] == 1)
-            {
-                add_liste(l, &l->vertices[i], &l->vertices[j]);
-            }
-        }
-    }
+    save(m, "tempMATRIX");
+    LISTE *l = load_liste("tempMATRIX");
+    remove("tempMATRIX");
     return l;
 }
 
-/*MATRIX *liste_to_matrix(LISTE *l)
-{
-    MATRIX *m = graphe_vide_matrix();
-    *m->vertices = *l->vertices;
-    for (int i =0; i < l->n; i++) {
-        add_sommet_matrix(m, l->vertices[i]);
-    }
-    int size;
-    for (int i = 0; i < l->n; i++)
-    {
-        for (int j = 0; j < l->sizes[i]; j++)
-        {
-            add_matrix(m, i + 1, l->graph[i][j]);
-        }
-    }
+MATRIX *liste_to_matrix(LISTE *l) {
+    save_list(l, "tempLIST");
+    MATRIX *m = load("tempLIST");
+    remove("tempLIST");
     return m;
-}*/
+}
 
 void analyse_graph(MATRIX *m) {
     display_graph_matrix(m);
