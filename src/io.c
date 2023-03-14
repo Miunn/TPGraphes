@@ -40,6 +40,7 @@ MATRIX *load(char *nom)
     size_t buff_size = 255;
     size_t chars;
 
+    // Get number of vertices
     chars = getline(&buff, &buff_size, stream);
     int vertices = atoi(buff);
     if (vertices <= 0)
@@ -50,11 +51,12 @@ MATRIX *load(char *nom)
 
     MATRIX *m = graphe_vide_matrix();
     int id;
-    // Ajout des sommets
+    // Build and add vertices to the matrix
     for (int i = 0; i < vertices; i++)
     {
-        getline(&buff, &buff_size, stream);
+        getline(&buff, &buff_size, stream); // Get the line
 
+        // Retreive the id length from char 0 to the next space (' ') char
         int idLen = 0;
         for (int i = 0; i < 100; i++)
         {
@@ -68,12 +70,15 @@ MATRIX *load(char *nom)
             }
         }
 
+        // Read the id based on the length compute above
         char *strId = (char *)malloc((idLen + 1) * sizeof(char));
         for (int i = 0; i < idLen; i++)
         {
             strId[i] = buff[i];
         }
-        strId[idLen] = '\0';
+        strId[idLen] = '\0';    // Add the EOT char
+
+        // Retreive the vertice's name length from space to the next new line feed ('\n')
         int nameLen = 0;
         for (int i = idLen + 1; i < 100; i++)
         {
@@ -87,20 +92,22 @@ MATRIX *load(char *nom)
             }
         }
 
+        // Read the name based on the length compute above
         char *name = (char *)malloc((nameLen + 1) * sizeof(char));
         for (int i = 0; i < nameLen; i++)
         {
             name[i] = buff[idLen + i + 1];
         }
-        name[nameLen] = '\0'; // getline leaves a carriage return
-        id = atoi(strId);
-        add_sommet_matrix(m, (VERTICE){name, id});
+        name[nameLen] = '\0';   // Add the end of text char
+        id = atoi(strId);       // Convert id in integer
+        add_sommet_matrix(m, (VERTICE){name, id});  // Create the vertice read and add it to the matrix
     }
 
-    fgets(buff, buff_size, stream);
+    // Read edges
+    fgets(buff, buff_size, stream);     // Read the line
     while (chars != -1)
     {
-        // Récupération des arretes
+        // Get the first name's length
         int nameALen = 0;
         for (int i = 0; i < 100; i++)
         {
@@ -114,6 +121,7 @@ MATRIX *load(char *nom)
             }
         }
 
+        // Read the first name based on the length read above
         char *nameVA = malloc((nameALen + 1) * sizeof(char));
         for (int i = 0; i < nameALen; i++)
         {
@@ -121,6 +129,7 @@ MATRIX *load(char *nom)
         }
         nameVA[nameALen] = '\0';
 
+        // Get the second name's length
         int nameBLen = 0;
         for (int i = nameALen + 1; i < 100; i++)
         {
@@ -134,6 +143,7 @@ MATRIX *load(char *nom)
             }
         }
 
+        // Read the second name based on the length read above
         char *nameVB = malloc((nameBLen + 1) * sizeof(char));
         for (int i = 0; i < nameBLen; i++)
         {
@@ -141,24 +151,26 @@ MATRIX *load(char *nom)
         }
         nameVB[nameBLen] = '\0';
 
+        // Fetch matrix vertices' for the current edge
         VERTICE *vA = NULL;
         VERTICE *vB = NULL;
         for (int i = 0; i < m->n; i++)
         {
+            // Names comparison
             if (strcmp(m->vertices[i].nom, nameVA) == 0)
             {
-                vA = &m->vertices[i];
+                vA = &m->vertices[i];       // Found it, save in vertice A
             }
             else if (strcmp(m->vertices[i].nom, nameVB) == 0)
             {
-                vB = &m->vertices[i];
+                vB = &m->vertices[i];       // Found it, save in vertice B
             }
         }
         if (vA != NULL && vB != NULL)
         {
-            add_matrix(m, vA, vB);
+            add_matrix(m, vA, vB);  // Add the edge
         }
-        chars = getline(&buff, &buff_size, stream);
+        chars = getline(&buff, &buff_size, stream);     // Get the new line
     }
     free(buff);
 
@@ -186,13 +198,12 @@ void save(MATRIX *m, char *nom)
         fprintf(stream, "%d %s\n", m->vertices[i].id, m->vertices[i].nom);
     }
 
-    int e;
-    char line[40] = "";
+    // Save edges (only once by going though the superior part of the matrix)
     for (int i = 0; i < m->n; i++)
     {
-        e = 0;
         for (int j = 0; j < i + 1; j++)
         {
+            // If an edge is present, write it in the file
             if (m->graph[j][i] == 1)
             {
                 fprintf(stream, "%s %s\n", m->vertices[i].nom, m->vertices[j].nom);
@@ -203,8 +214,16 @@ void save(MATRIX *m, char *nom)
     fclose(stream);
 }
 
+/**
+ * @brief Load a date file representing a graph (cf load function for the exact file format)
+ * 
+ * @param nom Path to the file to load
+ * @return LISTE* List representation for the graph
+ */
 LISTE *load_liste(char *nom)
 {
+    // Documentation is the same as load()
+
     FILE *stream = fopen(nom, "r");
 
     if (stream == NULL)
@@ -343,6 +362,12 @@ LISTE *load_liste(char *nom)
     return m;
 }
 
+/**
+ * @brief Save the graph represented by a list in a file following the same structure as load() function
+ * 
+ * @param l The list to save
+ * @param nom Path to the file
+ */
 void save_list(LISTE *l, char *nom)
 {
     // Le graphe étant non orienté la matrice de représentation est symétrique
