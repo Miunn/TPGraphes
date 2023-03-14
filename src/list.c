@@ -5,6 +5,11 @@
 #include "../includes/struct.h"
 #include "../includes/general.h"
 
+/**
+ * @brief Display the list representation of a graph
+ * 
+ * @param l List to display
+ */
 void display_graph_liste(LISTE *l)
 {
     for (int i = 0; i < l->n; i++)
@@ -23,9 +28,9 @@ void display_graph_liste(LISTE *l)
 }
 
 /**
- * @brief Libère la mémoire occupée par la structure de listes représentant un graphe
+ * @brief Free the memory taken by the list structure
  *
- * @param l La structure de listes à libérer
+ * @param l List structure to free
  */
 void free_liste(LISTE *l)
 {
@@ -37,6 +42,11 @@ void free_liste(LISTE *l)
     free(l->sizes);
 }
 
+/**
+ * @brief Create an empty list for a graph
+ * 
+ * @return LISTE* The empty list
+ */
 LISTE *graphe_vide_liste()
 {
     LISTE *l = (LISTE *)malloc(sizeof(LISTE));
@@ -47,34 +57,57 @@ LISTE *graphe_vide_liste()
     return l;
 }
 
+/**
+ * @brief Add a vertice to a list representation
+ * 
+ * @param G The graph under the list representation
+ * @param v The vertice to add
+ */
 void add_sommet_liste(LISTE *G, VERTICE v)
 {
+    // In order to allocate memory we make a distinction we the list contain 0 vertice
     if (G->n == 0)
     {
+        // We start by allocate and initialize an array which will contain all the sizes for the differents lists
         G->sizes = (int *)calloc(1, sizeof(int));
-        G->graph = (int **)malloc(sizeof(int *));
-        G->vertices = (VERTICE *)calloc(1, sizeof(VERTICE));
 
+        // We allocate a two dimensionnal array to represent the graph
+        G->graph = (int **)malloc(sizeof(int *));
+
+        // We allocate an array for for the vertices
+        G->vertices = (VERTICE *)malloc(sizeof(VERTICE));
+
+        // We allocate the memory for the first list in the graph
         G->graph[G->n] = (int *)malloc(sizeof(int));
-        G->graph[G->n][0] = -1;
-        G->sizes[G->n] = 0;
-        G->vertices[G->n] = v;
-        G->n++;
+        G->graph[G->n][0] = -1;     // This list contains no vertice, so we initialize at -1
+        G->sizes[G->n] = 0;         // First list has no vertice so its size is 0
+        G->vertices[G->n] = v;      // We save the first vertice
+        G->n++;                     // Increment the amount of vertice
     }
     else
     {
+        // We will need more memory to store the data
+        // We start by a reallocation of all the lists for a larger size
         G->graph = (int **)realloc(G->graph, (G->n + 1) * sizeof(int *));
-        G->sizes = (int *)realloc(G->sizes, (G->n + 1) * sizeof(int));
-        G->vertices = (VERTICE *)realloc(G->vertices, (G->n + 1) * sizeof(VERTICE));
+        G->sizes = (int *)realloc(G->sizes, (G->n + 1) * sizeof(int));      // We realloc the array of sizes to contain one more size (for the new vertice)
+        G->vertices = (VERTICE *)realloc(G->vertices, (G->n + 1) * sizeof(VERTICE));    // Same for the array of vertices
 
+        // Allocate memory for the new list
         G->graph[G->n] = (int *)malloc(sizeof(int));
-        G->graph[G->n][0] = -1;
-        G->sizes[G->n] = 0;
-        G->vertices[G->n] = (VERTICE){v.nom, v.id};
-        G->n++;
+        G->graph[G->n][0] = -1;                         // Start at -1
+        G->sizes[G->n] = 0;                             // No size for the last
+        G->vertices[G->n] = (VERTICE){v.nom, v.id};     // Save the new vertice
+        G->n++;                                         // Increment the amount of vertices
     }
 }
 
+/**
+ * @brief Add and edge in the list representation for the graph
+ * 
+ * @param G The graph under the list representation
+ * @param v1 Edge's starting vertice
+ * @param v2 Edge's ending vertice
+ */
 void add_liste(LISTE *G, VERTICE *v1, VERTICE *v2)
 {
     int taillei = G->sizes[v1->id];
@@ -144,6 +177,13 @@ void add_liste(LISTE *G, VERTICE *v1, VERTICE *v2)
     }
 }
 
+/**
+ * @brief Delete an edge in a graph under the list representation
+ * 
+ * @param G The graph under the list representation
+ * @param v1 Edge's starting vertice
+ * @param v2 Edge's ending vertice
+ */
 void supp_liste(LISTE *G, VERTICE *v1, VERTICE *v2)
 {
     int taillei = G->sizes[v1->id];
