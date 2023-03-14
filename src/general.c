@@ -28,6 +28,12 @@ int excentricite(VERTICE *s, DIST **dists, int n_dists) {
     return eccentricity;
 }
 
+/**
+ * @brief Convert a graph under MATRIX representation to a LIST representation using a tempory file
+ * 
+ * @param m The matrix graph to convert
+ * @return LISTE* The LIST representation
+ */
 LISTE *matrix_to_liste(MATRIX *m)
 {
     save(m, "tempMATRIX");
@@ -36,6 +42,12 @@ LISTE *matrix_to_liste(MATRIX *m)
     return l;
 }
 
+/**
+ * @brief Convert a graph under LIST representation to a MATRIX representation using a tempory file
+ * 
+ * @param l The list graph to convert
+ * @return MATRIX* The MATRIX representation
+ */
 MATRIX *liste_to_matrix(LISTE *l) {
     save_list(l, "tempLIST");
     MATRIX *m = load("tempLIST");
@@ -43,6 +55,18 @@ MATRIX *liste_to_matrix(LISTE *l) {
     return m;
 }
 
+/**
+ * @brief Compute several caracteristics for the graph given.
+ * - Distances between each edges pairs
+ * - Diameter
+ * - Eccentricities
+ * - Centers
+ * - Radius
+ * - Levels for each edges
+ * - Centers based on levels
+ * 
+ * @param m 
+ */
 void analyse_graph(MATRIX *m) {
     display_graph_matrix(m);
 
