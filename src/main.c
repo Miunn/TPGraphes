@@ -23,24 +23,17 @@
 
 int main()
 {
-    /*MATRIX *m = gen_matrix(time(NULL), 0.5);
-    analyse_graph(m);
+    FILE *output_analyse = fopen("output.txt", "w");
+
+    MATRIX *m = gen_matrix(time(NULL), 0.5);
+
+    analyse_graph(m, output_analyse);
+    fclose(output_analyse);
 
     save(m, "save.txt");
 
-    free_matrix(m);*/
-
-    LISTE *l = load_liste("g1.txt");
-
-    display_graph_liste(l);
-    //save_list(l, "savelist.txt");
-
-    MATRIX *m = liste_to_matrix(l);
-
-    display_graph_matrix(m);
-
-    free_liste(l);
     free_matrix(m);
+
 
     return 0;
 }

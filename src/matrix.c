@@ -8,43 +8,47 @@
  * @brief Display a graph under the matrix representation
  * 
  * @param m The matrix to display
+ * @param stream Output stream to display on, if NULL print to stdout
  */
-void display_graph_matrix(MATRIX *m)
+void display_graph_matrix(MATRIX *m, FILE *stream)
 {
-    printf("%dx%d matrix\n", m->n, m->n);
+    if (stream == NULL) {
+        stream = stdout;
+    }
+    fprintf(stream, "%dx%d matrix\n", m->n, m->n);
 
     if (m->n == 0)
     {
-        printf("No data\n");
+        fprintf(stream, "No data\n");
         return;
     }
 
-    printf("Sommets:");
+    fprintf(stream, "Sommets:");
     for (int i = 0; i < m->n; i++)
     {
-        printf("[%d] %s / ", m->vertices[i].id, m->vertices[i].nom);
+        fprintf(stream, "[%d] %s / ", m->vertices[i].id, m->vertices[i].nom);
     }
-    printf("\n");
+    fprintf(stream, "\n");
 
-    printf("    ");
+    fprintf(stream, "    ");
     for (int i = 0; i < m->n; i++)
     {
-        printf("%d ", m->vertices[i].id);
+        fprintf(stream, "%d ", m->vertices[i].id);
     }
-    printf("\n");
+    fprintf(stream, "\n");
     for (int i = 0; i < m->n * 2 + 4; i++)
     {
-        printf("-");
+        fprintf(stream, "-");
     }
-    printf("\n");
+    fprintf(stream, "\n");
     for (int i = 0; i < m->n; i++)
     {
-        printf("%d | ", m->vertices[i].id);
+        fprintf(stream, "%d | ", m->vertices[i].id);
         for (int j = 0; j < m->n; j++)
         {
-            printf("%d ", m->graph[i][j]);
+            fprintf(stream, "%d ", m->graph[i][j]);
         }
-        printf("\n");
+        fprintf(stream, "\n");
     }
 }
 

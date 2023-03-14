@@ -3,7 +3,7 @@
 
 #include "../includes/struct.h"
 
-void display_graph_matrix(MATRIX *m);
+void display_graph_matrix(MATRIX *m, FILE *stream);
 void free_matrix(MATRIX *m);
 MATRIX *graphe_vide_matrix();
 void add_sommet_matrix(MATRIX *m, VERTICE s);
