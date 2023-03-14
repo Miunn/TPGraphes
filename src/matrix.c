@@ -4,6 +4,11 @@
 #include "../includes/struct.h"
 #include "../includes/general.h"
 
+/**
+ * @brief Display a graph under the matrix representation
+ * 
+ * @param m The matrix to display
+ */
 void display_graph_matrix(MATRIX *m)
 {
     printf("%dx%d matrix\n", m->n, m->n);
@@ -44,9 +49,9 @@ void display_graph_matrix(MATRIX *m)
 }
 
 /**
- * @brief Libère la mémoire occupée par la structure de matrice représentant un graphe
+ * @brief Free the memory used by a matrix
  *
- * @param m La structure de matrice à libérer
+ * @param m Matrix structure to free
  */
 void free_matrix(MATRIX *m)
 {
@@ -60,9 +65,9 @@ void free_matrix(MATRIX *m)
 }
 
 /**
- * @brief Initialise un graphe vide sans sommet ni arete
+ * @brief Initialize an empty graph under the matrix representation
  *
- * @return MATRIX* La matrice créée
+ * @return MATRIX* The created matrix
  */
 MATRIX *graphe_vide_matrix()
 {
@@ -74,11 +79,10 @@ MATRIX *graphe_vide_matrix()
 }
 
 /**
- * @brief Ajoute un sommet à la matrice. Si le sommet est discontinu pr rapport à la taille de la matrice
- * (si on essaye d'ajouter le sommet 5 alors que la matrice contient les sommets 1, 2 et 3) on ajoute le(s) sommet(s) manquant(s)
+ * @brief Add a vertice to the matrix.
  *
- * @param m La matrice à modifer
- * @param s L'identifiant du sommet à ajouter
+ * @param m The graph under the matrix representation
+ * @param s The new vertice
  */
 void add_sommet_matrix(MATRIX *m, VERTICE s)
 {
@@ -95,7 +99,7 @@ void add_sommet_matrix(MATRIX *m, VERTICE s)
     }
     else
     {
-        // Vérification de l'absence du sommet
+        // Check if the vertice isn't already registered
         for (int i = 0; i < m->n; i++)
         {
             if (m->vertices[i].id == s.id)
