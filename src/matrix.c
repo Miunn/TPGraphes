@@ -263,12 +263,21 @@ int est_sous_graphe_matrix(MATRIX *m1, MATRIX *m2)
     return 0;
 }
 
+VERTICE *get_vertice_by_name_matrix(MATRIX *m, char *name) {
+    for (int i = 0; i < m->n; i++){
+        if (strcmp(m->vertices[i].nom, name) == 0) {
+            return &m->vertices[i];
+        }
+    }
+    return NULL;
+}
+
 /**
  * @brief Renvoi 1 si m1 est un sous graphe partiel de m2
  *
- * @param m1
- * @param m2
- * @return int
+ * @param m1 Premier Graphe
+ * @param m2 Second Graphe
+ * @return int 1 ou 0 selon le prédicat
  */
 int est_sous_graphe_partiel_matrix(MATRIX *m1, MATRIX *m2)
 {
@@ -301,24 +310,31 @@ int est_sous_graphe_partiel_matrix(MATRIX *m1, MATRIX *m2)
     int n_edges_m2 = 0;
     for (int i = 0; i < m1->n; i++)
     {
+        VERTICE *v1 = get_vertice_by_name_matrix(m2, m1->vertices[i].nom);
         for (int j = 0; j < i + 1; j++)
-        {
+        {    
+            VERTICE *v2 = get_vertice_by_name_matrix(m2, m1->vertices[j].nom);
             if (m1->graph[i][j] == 1)
             {
                 n_edges_m1++;
-                if (m2->graph[i][j] != 1)
+                if (m2->graph[v1->id][v2->id] != 1)
                 {
                     return 0;
                 }
             }
+        }
+    }
 
-            if (m2->graph[i][j] == 1)
-            {
+    // Count amount of edges in m2
+    for (int i = 0; i < m2->n; i++) {
+        for (int j = 0; j < i + 1; j++) {
+            if (m2->graph[i][j] == 1) {
                 n_edges_m2++;
             }
         }
     }
 
+    // Check the strict inclusion
     if (n_edges_m1 == n_edges_m2)
     {
         return 0;

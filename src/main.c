@@ -34,6 +34,5 @@ int main()
 
     free_matrix(m);
 
-
     return 0;
 }
