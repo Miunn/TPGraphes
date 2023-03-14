@@ -50,10 +50,11 @@ void display_graph_matrix(MATRIX *m)
  */
 void free_matrix(MATRIX *m)
 {
-    for (int i = 0; i < m->n; i++)
+    /*for (int i = 0; i < m->n+1; i++)
     {
+        printf("free graph[%d]\n", i);
         free(m->graph[i]);
-    }
+    }*/
     free(m->graph);
     free(m->vertices);
 }
@@ -104,11 +105,9 @@ void add_sommet_matrix(MATRIX *m, VERTICE s)
         }
 
         m->vertices = (VERTICE *)realloc(m->vertices, (m->n + 1) * sizeof(VERTICE));
-
         m->vertices[m->n] = (VERTICE){s.nom, s.id};
-        m->graph = (int **)realloc(m->graph, (m->n + 1) * sizeof(int *));
+        m->graph = (int **)realloc(m->graph, (m->n + 2) * sizeof(int *));   // + 2 because it's one more row with one more column
         m->graph[m->n] = (int *)malloc((m->n + 1) * sizeof(int));
-
         for (int i = 0; i <= m->n; i++)
         {
             m->graph[m->n][i] = 0;
