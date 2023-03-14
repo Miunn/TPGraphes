@@ -1,6 +1,8 @@
-3
-0 B
-1 D
-2 E
+4
+0 A
+1 B
+2 D
+3 C
+A B
+A D
 B D
-D E
