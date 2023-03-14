@@ -26,7 +26,7 @@ int main()
     MATRIX *m = gen_matrix(time(NULL), 0.5);
     analyse_graph(m);
 
-    save(m, "test.txt");
+    save(m, "save.txt");
 
     free_matrix(m);
     return 0;

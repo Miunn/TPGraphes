@@ -5,9 +5,8 @@
 3 D
 4 E
 5 F
-B A
-C A
-D A
 D B
-E D
-F E
+D C
+E B
+F A
+F B
