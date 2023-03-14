@@ -11,10 +11,12 @@ MATRIX *gen_matrix(int seed, float density) {
 
     MATRIX *m = graphe_vide_matrix();
 
+    char alphabet[10] = "ABCDEFGHIJ";
+
     for (int i = 0; i < n; i++) {
         fflush(stdout);
         char *name = malloc(2*sizeof(char));
-        name[0] = 65+i;
+        name[0] = alphabet[i];
         name[1] = '\0';
         add_sommet_matrix(m, (VERTICE){name, i});
     }

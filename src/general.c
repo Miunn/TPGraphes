@@ -70,7 +70,7 @@ void analyse_graph(MATRIX *m) {
     display_graph_matrix(m);
 
     printf("--------------------------------\n");
-    printf("Si le graphe n'est pas conexe, certains résultats\nprésentés ci-dessous peuvent êtres erronés.\n");
+    printf("Si le graphe n'est pas connexe, certains résultats\nprésentés ci-dessous peuvent êtres erronés.\n");
     printf("--------------------------------\n");
 
     int n_dists = (m->n * (m->n - 1)) / 2;
