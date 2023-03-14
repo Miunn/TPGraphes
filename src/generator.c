@@ -4,15 +4,24 @@
 #include "../includes/struct.h"
 #include "../includes/matrix.h"
 
+/**
+ * @brief Generate a graph represented under matrix representation
+ * 
+ * @param seed Seed for the random generation
+ * @param density Density of edges in the graph
+ * @return MATRIX* 
+ */
 MATRIX *gen_matrix(int seed, float density) {
     srand(seed);
 
-    int n = 2 + rand() % 9; // Génération d'un nombre de sommets compris entre 2 et 10
+    // Generate an amount of vertices between 2 and 10
+    int n = 2 + rand() % 9;
 
     MATRIX *m = graphe_vide_matrix();
 
     char alphabet[10] = "ABCDEFGHIJ";
 
+    // Create the n-th vertices
     for (int i = 0; i < n; i++) {
         fflush(stdout);
         char *name = malloc(2*sizeof(char));
@@ -21,6 +30,7 @@ MATRIX *gen_matrix(int seed, float density) {
         add_sommet_matrix(m, (VERTICE){name, i});
     }
     
+    // Created the edges based on the density given
     for (int i = 0; i < m->n; i++) {
         for (int j = i + 1; j < m->n; j++) {
             if ((float)rand()/(float)RAND_MAX <= density) {
