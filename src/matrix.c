@@ -99,7 +99,6 @@ void add_sommet_matrix(MATRIX *m, VERTICE s)
         {
             if (m->vertices[i].id == s.id)
             {
-                printf("Sommet deja present\n");
                 return;
             }
         }

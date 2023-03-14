@@ -111,7 +111,7 @@ void analyse_graph(char *path) {
 
 int main()
 {
-    analyse_graph("g1.txt");
+    analyse_graph("g3.txt");
 
     MATRIX *m = load("g1.txt");
     display_graph_matrix(m);

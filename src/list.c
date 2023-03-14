@@ -394,7 +394,7 @@ int calcul_distance_liste(LISTE *l, VERTICE *a, VERTICE *b, VERTICE **ban, int n
             }
             else
             {
-                int r = calcul_distance_matrix(l, neighbors[i], b, ban, n_ban, d + 1);
+                int r = calcul_distance_liste(l, neighbors[i], b, ban, n_ban, d + 1);
                 if (r > 0)
                 {
                     all_dists[i] = r;
@@ -443,7 +443,7 @@ void calculs_distances_liste(LISTE *l, DIST **dists)
             DIST *d = (DIST *)malloc(sizeof(DIST));
             d->start = &l->vertices[i];
             d->end = &l->vertices[j];
-            d->d = calcul_distance_matrix(l, &l->vertices[i], &l->vertices[j], ban, 0, 0);
+            d->d = calcul_distance_liste(l, &l->vertices[i], &l->vertices[j], ban, 0, 0);
             dists[n] = d;
             n++;
         }
@@ -539,7 +539,7 @@ int donne_centre_degre_liste(LISTE *l, VERTICE **centres_list, int *deg_max)
     int n_dists = (l->n * (l->n - 1)) / 2;
 
     int *degs = (int *)calloc(l->n, sizeof(int));
-    calcul_degre_matrix(l, degs);
+    calcul_degre_liste(l, degs);
     int max_deg = degs[0];
     for (int i = 1; i < l->n; i++)
     {
