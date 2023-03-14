@@ -3,6 +3,6 @@
 
 #include "../includes/struct.h"
 
-MATRIX *gen_matrix(int seed);
+MATRIX *gen_matrix(int seed, float density);
 
 #endif

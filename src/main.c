@@ -23,8 +23,8 @@
 
 int main()
 {
-    MATRIX *m = gen_matrix(time(NULL));
-    analyse_graph(m, 0.5);
+    MATRIX *m = gen_matrix(time(NULL), 0.5);
+    analyse_graph(m);
 
     save(m, "test.txt");
 
