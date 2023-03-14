@@ -4,14 +4,10 @@
 #include "../includes/struct.h"
 #include "../includes/matrix.h"
 
-MATRIX *gen_matrix(int seed) {
+MATRIX *gen_matrix(int seed, float density) {
     srand(seed);
 
-    float p = 0.7;
-
     int n = 2 + rand() % 9; // Génération d'un nombre de sommets compris entre 2 et 10
-
-    printf("%d\n", n);
 
     MATRIX *m = graphe_vide_matrix();
 
@@ -25,7 +21,7 @@ MATRIX *gen_matrix(int seed) {
     
     for (int i = 0; i < m->n; i++) {
         for (int j = i + 1; j < m->n; j++) {
-            if ((float)rand()/(float)RAND_MAX <= p) {
+            if ((float)rand()/(float)RAND_MAX <= density) {
                 add_matrix(m, &m->vertices[i], &m->vertices[j]);
             }
         }
