@@ -31,13 +31,28 @@ int main()
     free_matrix(m);*/
 
     LISTE *l = load_liste("g1.txt");
+    LISTE *l2 = load_liste("g2.txt");
 
     display_graph_liste(l);
-    //save_list(l, "savelist.txt");
+    display_graph_liste(l2);
+    //  save_list(l, "savelist.txt");
+
+    for (int i = 0; i < l->n; i++)
+    {
+        printf("%s   ", l->vertices[i]);
+    }
+    printf("\n");
+    for (int i = 0; i < l2->n; i++)
+    {
+        printf("%s   ", l2->vertices[i]);
+    }
+    printf("\n");
 
     MATRIX *m = liste_to_matrix(l);
 
-    display_graph_matrix(m);
+    // analyse_graph_liste(l);
+
+    printf("%d", est_sous_graphe_partiel_liste(l2, l));
 
     free_liste(l);
     free_matrix(m);

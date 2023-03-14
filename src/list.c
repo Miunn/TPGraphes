@@ -200,12 +200,12 @@ int inclus_sommet_liste(LISTE *G1, LISTE *G2, int strict)
     {
         for (int j = 0; j < G2->n; j++)
         {
-            if (G1->vertices[i].nom == G2->vertices[j].nom)
+            if (!strcmp(G1->vertices[i].nom, G2->vertices[j].nom))
             {
                 nbsommets++;
                 break;
             }
-            if (j == G2->n - 1)
+            if (j == (G2->n - 1))
             {
                 return 0;
             }
@@ -214,6 +214,7 @@ int inclus_sommet_liste(LISTE *G1, LISTE *G2, int strict)
 
     if (nbsommets == G2->n && strict)
     {
+        printf("non car strict\n");
         return 0;
     }
     return 1;
@@ -296,11 +297,87 @@ int est_partiel_liste(LISTE *m1, LISTE *m2)
 
 int est_sous_graphe_liste(LISTE *l1, LISTE *l2)
 {
-    if (inclus_sommet_liste(l1, l2, 1) && inclus_aretes_liste(l1, l2))
+    if (!inclus_sommet_liste(l1, l2, 0))
     {
-        return 1;
+        return 0;
     }
-    return 0;
+    char *s1, *s2;      // names of vertices
+    int index1, index2; // indexs corresponding of s1 and s2 in l2
+    for (int i = 0; i < l1->n; i++)
+    {
+        s1 = l1->vertices[i].nom;
+        for (int k = 0; k < l2->n; k++)
+        {
+            if (!strcmp(l2->vertices[k].nom, s1))
+                index1 = k;
+        }
+
+        if (l1->sizes[i] == 0)
+        {
+            if (l2->sizes[index1] != 0)
+                return 0;
+        }
+
+        for (int j = 0; j < l1->sizes[i]; j++)
+        {
+            s2 = l1->vertices[l1->graph[i][j]].nom;
+
+            for (int l = 0; l < l2->n; l++)
+            {
+                if (!strcmp(l2->vertices[l].nom, s2))
+                    index2 = l;
+            }
+            if (strcmp(l1->vertices[l1->graph[i][j]].nom, l2->vertices[index2].nom))
+                return 0;
+        }
+    }
+    return 1;
+}
+
+int est_sous_graphe_partiel_liste(LISTE *l1, LISTE *l2)
+{
+    if (!inclus_sommet_liste(l1, l2, 0))
+        return 0;
+
+    int n_edges_l1 = 0, n_edges_l2 = 0;
+    char *s1, *s2;      // names of vertices
+    int index1, index2; // indexs corresponding of s1 and s2 in l2
+    for (int i = 0; i < l1->n; i++)
+    {
+        s1 = l1->vertices[i].nom;
+
+        for (int k = 0; k < l2->n; k++)
+        {
+            if (!strcmp(l2->vertices[k].nom, s1))
+                index1 = k;
+        }
+
+        for (int j = 0; j < l1->sizes[i]; j++)
+        {
+            n_edges_l1++;
+            s2 = l1->vertices[j].nom;
+
+            for (int l = 0; l < l2->n; l++)
+            {
+                if (!strcmp(l2->vertices[l].nom, s2))
+                    index2 = l;
+            }
+
+            for (int m = 0; m < l2->sizes[index1]; m++)
+            {
+                if (!strcmp(s2, l2->vertices[l2->graph[index1][m]].nom))
+                    break;
+                if (m == l2->n - 1)
+                    return 0;
+            }
+        }
+    }
+
+    if (n_edges_l1 == n_edges_l2)
+    {
+        return 0;
+    }
+    return 1;
 }
 
 /**
@@ -310,6 +387,7 @@ int est_clique_liste(LISTE *l1, LISTE *l2)
 {
     if (est_sous_graphe_liste(l1, l2))
     {
+        printf("est sous graphe\n");
         for (int i = 0; i < l1->n; i++)
         {
             for (int j = 0; j < l1->n; j++)
@@ -332,6 +410,7 @@ int est_clique_liste(LISTE *l1, LISTE *l2)
         }
         return 1;
     }
+    printf("non\n");
     return 0;
 }
 
