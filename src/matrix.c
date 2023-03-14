@@ -104,7 +104,7 @@ void add_sommet_matrix(MATRIX *m, VERTICE s)
             }
         }
 
-        m->vertices = (VERTICE *)realloc(m->vertices, (m->n + 1) * sizeof(VERTICE));
+        m->vertices = (VERTICE *)realloc(m->vertices, (m->n + 2) * sizeof(VERTICE));
         m->vertices[m->n] = (VERTICE){s.nom, s.id};
         m->graph = (int **)realloc(m->graph, (m->n + 2) * sizeof(int *));   // + 2 because it's one more row with one more column
         m->graph[m->n] = (int *)malloc((m->n + 1) * sizeof(int));
