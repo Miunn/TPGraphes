@@ -178,16 +178,12 @@ void save(MATRIX *m, char *nom)
 
     FILE *stream = fopen(nom, "w");
     char buff[20];
-    snprintf(buff, 20, "%d", m->n);
-    fprintf(stream, buff);
-    fprintf(stream, "\n");
+    fprintf(stream, "%d\n", m->n);
 
     // Save vertices
-    for (int i = 1; i < m->n + 1; i++)
+    for (int i = 0; i < m->n; i++)
     {
-        snprintf(buff, 20, "%d", i);
-        fprintf(stream, buff);
-        fprintf(stream, "\n");
+        fprintf(stream, "%d %s\n", m->vertices[i].id, m->vertices[i].nom);
     }
 
     int e;
@@ -199,12 +195,7 @@ void save(MATRIX *m, char *nom)
         {
             if (m->graph[j][i] == 1)
             {
-                snprintf(line, 40, "%d", j + 1);
-                strcat(line, " ");
-                snprintf(buff, 20, "%d", i + 1);
-                strcat(line, buff);
-                fprintf(stream, line);
-                fprintf(stream, "\n");
+                fprintf(stream, "%s %s\n", m->vertices[i].nom, m->vertices[j].nom);
             }
         }
     }

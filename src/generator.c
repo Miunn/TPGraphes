@@ -3,14 +3,21 @@
 #include <stdio.h>
 
 #include "../includes/struct.h"
+#include "../includes/matrix.h"
 
-int gen_matrix(int seed) {
+MATRIX *gen_matrix(int seed) {
     srand(seed);
 
     float p = (float)rand()/(float)RAND_MAX;
 
-    
+    int n = 1 + rand() % 9;
 
+    printf("%d\n", n);
+
+    MATRIX *m = graphe_vide_matrix();
+    m->n = n;
+
+    
 
     return 0;
 }

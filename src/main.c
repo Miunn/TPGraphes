@@ -112,5 +112,12 @@ void analyse_graph(char *path) {
 int main()
 {
     analyse_graph("g1.txt");
+
+    MATRIX *m = load("g1.txt");
+    display_graph_matrix(m);
+    save(m, "save.txt");
+
+    MATRIX *t = load("save.txt");
+    display_graph_matrix(t);
     return 0;
 }
