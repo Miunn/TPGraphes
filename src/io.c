@@ -1,3 +1,14 @@
+/**
+ * @file io.c
+ * @author BOUDADI Liam - CAULIER Rémi
+ * @brief Contains functions for the Input/Output operations (typically load and save)
+ * @version 1.0
+ * @date 2023-03-14
+ * 
+ * @copyright Copyright (c) 2023
+ * 
+ */
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>

@@ -1,3 +1,14 @@
+/**
+ * @file matrix.c
+ * @author BOUDADI Liam - CAULIER Rémi
+ * @brief All functions used for the matrix representation of a graph
+ * @version 1.0
+ * @date 2023-03-14
+ * 
+ * @copyright Copyright (c) 2023
+ * 
+ */
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>

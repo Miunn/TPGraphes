@@ -1,3 +1,14 @@
+/**
+ * @file generator.c
+ * @author BOUDADI Liam - CAULIER Rémi
+ * @brief Contain function to generate a graph under the matrix representation
+ * @version 1.0
+ * @date 2023-03-14
+ * 
+ * @copyright Copyright (c) 2023
+ * 
+ */
+
 #include <stdlib.h>
 #include <stdio.h>
 

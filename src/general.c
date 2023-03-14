@@ -1,3 +1,14 @@
+/**
+ * @file general.c
+ * @author BOUDADI Liam - CAULIER Rémi
+ * @brief Contain function usefull or used for both representation (list and matrix)
+ * @version 1.0
+ * @date 2023-03-14
+ * 
+ * @copyright Copyright (c) 2023
+ * 
+ */
+
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
