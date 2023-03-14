@@ -23,11 +23,16 @@
 
 int main()
 {
-    MATRIX *m = gen_matrix(time(NULL), 0.5);
+    /*MATRIX *m = gen_matrix(time(NULL), 0.5);
     analyse_graph(m);
 
     save(m, "save.txt");
 
-    free_matrix(m);
+    free_matrix(m);*/
+
+    LISTE *l = load_liste("g1.txt");
+
+    display_graph_liste(l);
+    save_list(l, "savelist.txt");
     return 0;
 }

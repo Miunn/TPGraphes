@@ -7,5 +7,6 @@ MATRIX *load(char *nom);
 void save(MATRIX *m, char *nom);
 
 LISTE *load_liste(char *nom);
+void save_list(LISTE *l, char *nom);
 
 #endif

@@ -342,3 +342,33 @@ LISTE *load_liste(char *nom)
     fclose(stream);
     return m;
 }
+
+void save_list(LISTE *l, char *nom)
+{
+    // Le graphe étant non orienté la matrice de représentation est symétrique
+    // Ainsi pour connaitre les aretes un parcours de la partie supérieure ou inférieure de la matrice est suffisant
+
+    FILE *stream = fopen(nom, "w");
+    char buff[20];
+    fprintf(stream, "%d\n", l->n);
+
+    // Save vertices
+    for (int i = 0; i < l->n; i++)
+    {
+        fprintf(stream, "%d %s\n", l->vertices[i].id, l->vertices[i].nom);
+    }
+
+    int e;
+    char line[40] = "";
+    for (int i = 0; i < l->n; i++)
+    {
+        for (int j = 0; j < l->sizes[i]; j++)
+        {
+            if (l->graph[i][j] > i) {
+                fprintf(stream, "%s %s\n", l->vertices[i].nom, l->vertices[l->graph[i][j]].nom);
+            }
+        }
+    }
+
+    fclose(stream);
+}
