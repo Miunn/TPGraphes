@@ -5,5 +5,6 @@
 
 int excentricite(VERTICE *s, DIST **dists, int n_dists);
 LISTE *matrix_to_liste(MATRIX *m);
+void analyse_graph(MATRIX *m);
 
 #endif
