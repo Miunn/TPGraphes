@@ -24,7 +24,7 @@
 int main()
 {
     MATRIX *m = gen_matrix(time(NULL));
-    analyse_graph(m);
+    analyse_graph(m, 0.5);
 
     save(m, "test.txt");
 
