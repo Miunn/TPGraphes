@@ -3,11 +3,14 @@
  * @author BOUDADI Liam & CAULIER Rémi
  * @brief Fichier final d'avancement
  * @version 2.0
- * @date 2023-02-07
+ * @date 2023-03-14     // Pi day :D
  *
  * @copyright Copyright (c) 2023
  *
  */
+
+// Pour la compilation
+// gcc src/main.c src/generator.c src/matrix.c src/general.c src/list.c src/io.c -o main
 
 #include <stdlib.h>
 #include <stdio.h>
